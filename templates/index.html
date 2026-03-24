@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Respasovellus</title>
+</head>
+
+<body>
+  <h1>Respasovellus</h1>
+  
+  {% if session.username %}
+  <p>
+    Olet kirjautunut sisään käyttäjänä {{ session.username }}
+  </p>
+  <p>
+    <a href="/logout">Kirjaudu ulos</a>
+  </p>
+  <p>
+    <a href="/newrecipe">Lisää resepti</a>
+  {% else %}
+  <p>
+    <a href="/login">Kirjaudu sisään</a>
+  </p>
+  <p>
+    <a href="/register">Uusi käyttäjä</a>
+  </p>
+  {% endif %}
+</body>
+
+
+</html>
+  
