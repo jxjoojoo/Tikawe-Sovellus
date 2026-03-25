@@ -4,6 +4,7 @@ from flask import redirect, render_template, request, session
 from werkzeug.security import generate_password_hash, check_password_hash
 import db
 import config
+import recipes
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
@@ -81,27 +82,8 @@ def submit():
         recipename = request.form["recipename"]
         user_id = session["user_id"]
 
-        sql = """INSERT INTO Recipes (name, user_id, description) VALUES
-        (?, ?, ?)"""
-        try:
-            db.execute(sql, [recipename, user_id, description])
-        except sqlite3.IntegrityError:
-            return "Tämä nimi jo käytössä reseptillä"
-        
-        recipe_id = db.last_insert_id()
+        recipes.add_recipe(ingredients, amounts, description, recipename, user_id)
 
-        text = ""
-        if len(ingredients) == 0:
-            text += "Ei ainesosia"
-        else:
-            for ingredient, amount in zip(ingredients, amounts):
-                text += f"{ingredient}: {amount},"
-                
-        text = text[:-1]
-
-        sql = """INSERT INTO Ingredients (recipe_id, items) VALUES (?, ?)"""
-        db.execute(sql, [recipe_id, text])
-    
     return render_template("submit.html")
 
 
