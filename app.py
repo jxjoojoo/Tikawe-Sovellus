@@ -22,15 +22,17 @@ def login():
         username = request.form["username"]
         password = request.form["password"]
     
-        sql = "SELECT password_hash FROM Users WHERE username = ?"
+        sql = "SELECT id, password_hash FROM Users WHERE username = ?"
         result = db.query(sql, [username])
         if len(result) == 0:
             return "Väärä runnus tai salasana"
         else:
-            password_hash = result[0][0]
+            user_id = result[0][0]
+            password_hash = result[0][1]
         
         if check_password_hash(password_hash, password):
             session["username"] = username
+            session["user_id"] = user_id
             return redirect("/")
         else:
             return "Väärä runnus tai salasana"
@@ -38,6 +40,7 @@ def login():
 @app.route("/logout")
 def logout():
     del session["username"]
+    del session["user_id"]
     return redirect("/")
 
 
@@ -58,12 +61,48 @@ def create():
         return render_template("register.html")
 
     try:
-        sql = "INSERT INTO users (username, password_hash) VALUES (?, ?)"
+        sql = "INSERT INTO Users (username, password_hash) VALUES (?, ?)"
         db.execute(sql, [username, password_hash])
     except sqlite3.IntegrityError:
         return "VIRHE: tunnus on jo varattu"
 
     return "Tunnus luotu"
+
+@app.route("/newrecipe", methods=["GET"])
+def newrecipe():
+    return render_template("newrecipe.html")
+
+@app.route("/submit", methods=["GET", "POST"])
+def submit():
+    if request.method == "POST":
+        ingredients = request.form.getlist("ingredients[]")
+        amounts = request.form.getlist("amounts[]")
+        description = request.form["description"]
+        recipename = request.form["recipename"]
+        user_id = session["user_id"]
+
+        sql = """INSERT INTO Recipes (name, user_id, description) VALUES
+        (?, ?, ?)"""
+        try:
+            db.execute(sql, [recipename, user_id, description])
+        except sqlite3.IntegrityError:
+            return "Tämä nimi jo käytössä reseptillä"
+        
+        recipe_id = db.last_insert_id()
+
+        text = ""
+        if len(ingredients) == 0:
+            text += "Ei ainesosia"
+        else:
+            for ingredient, amount in zip(ingredients, amounts):
+                text += f"{ingredient}: {amount},"
+                
+        text = text[:-1]
+
+        sql = """INSERT INTO Ingredients (recipe_id, items) VALUES (?, ?)"""
+        db.execute(sql, [recipe_id, text])
+    
+    return render_template("submit.html")
 
 
 

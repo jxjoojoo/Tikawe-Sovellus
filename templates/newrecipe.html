@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+{% if session.user_id %}
+<head>
+<h1>Uusi resepti</h1>
+</head>
+<body>
+<p>Reseptin nimi:
+</p>
+    <title>Ainesosat</title>
+<style>
+        .ingredient-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .ingredient-container input {
+            margin-right: 10px;
+        }
+    </style>
+    <script>
+        function addIngredientField() {
+            const container = document.getElementById('ingredientsContainer');
+            const div = document.createElement('div');
+            div.className = 'ingredient-container';
+
+            const ingredientInput = document.createElement('input');
+            ingredientInput.type = 'text';
+            ingredientInput.name = 'ingredients[]';
+            ingredientInput.placeholder = 'Syötä ainesosa';
+
+            const amountInput = document.createElement('input');
+            amountInput.type = 'text';
+            amountInput.name = 'amounts[]';
+            amountInput.placeholder = 'Syötä määrä';
+
+            div.appendChild(ingredientInput);
+            div.appendChild(amountInput);
+            container.appendChild(div);
+        }
+    </script>
+  <p>Ainesosat ja määrät</p>
+    <form action="/submit" method="post">
+      <input type="text" name="recipename" />
+        <div id="ingredientsContainer">
+            <div class="ingredient-container">
+                <input type="text" name="ingredients[]" placeholder="Syötä ainesosa">
+                <input type="text" name="amounts[]" placeholder="Syötä määrä">
+            </div>
+        </div>
+        <button type="button" onclick="addIngredientField()">Lisää ainesosa</button><br><br>
+      <p> Ohjeet:</p>
+      <textarea name="description" rows="15" cols="80"></textarea>
+      
+      <input type="submit" value="Julkaise">
+    </form>
+  
+  {%else%}
+  <p>Kirjaudu ensin sisään lisätäksesi reseptin</p>
+    <a href="/login">Kirjaudu </a>
+  {%endif%}
+
+</body>
+</html>
+
+
+
