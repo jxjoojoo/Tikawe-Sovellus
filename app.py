@@ -151,12 +151,12 @@ def edit_recipe(recipe_id):
         if "add" in request.form:
             ingredients.append("")
 
-        elif "remove" in request.form:
+        if "remove" in request.form:
             index = int(request.form.get("remove"))
             if index >= 0 and index < count:
                 ingredients.pop(index)
 
-        elif "save" in request.form:
+        if "save" in request.form:
             ingredients = [i for i in ingredients if i.strip()]
             ingredients_str = ",".join(ingredients)
 
@@ -186,11 +186,29 @@ def update_recipe():
     description = request.form.get("description")
 
     recipes.update_recipe(recipe_id, recipename, ingredients, description)
-    print(recipe_id)
-    print(recipename)
-    print(description)
 
     return redirect("/recipe/" + str(recipe_id))
+
+@app.route("/remove_recipe/<int:recipe_id>", methods=["GET", "POST"])
+def remove_recipe(recipe_id):
+
+    if request.method == "GET":
+        recipe = recipes.get_recipe(recipe_id)
+        return render_template("remove_recipe.html", recipe=recipe)
+    
+    if request.method == "POST":
+
+        if "remove" in request.form:
+            recipes.remove_recipe(recipe_id)
+            return redirect("/")
+
+        if "dont" in request.form:
+            return redirect("/recipe/" + str(recipe_id))
+
+        
+
+
+
 
 
 

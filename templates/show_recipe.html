@@ -10,6 +10,9 @@
   {% if session.user_id == recipe.user_id %}
     <p>
       <a href="/edit_recipe/{{ recipe.id }}">Muokkaa reseptiä</a>
+      <br>
+      <a href="/remove_recipe/{{ recipe.id }}">Poista resepti</a>
+    </p>
   {% endif %}
   
     <ul>
@@ -19,6 +22,9 @@
     </ul>
     
    <p>{{ recipe.description }}</p>
+   
+   <p> 
+     <a href="/">Takaisin</a>
   
 </body/>
 </html>
