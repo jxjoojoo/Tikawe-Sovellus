@@ -80,19 +80,61 @@ def create():
 
     return "Tunnus luotu"
 
-@app.route("/newrecipe", methods=["GET"])
+@app.route("/newrecipe", methods=["GET", "POST"])
+@app.route("/newrecipe", methods=["GET", "POST"])
 def newrecipe():
-    return render_template("newrecipe.html")
+    count = int(request.form.get("count", 1))
 
-@app.route("/submit", methods=["GET", "POST"])
+    ingredients = []
+    amounts = []
+
+    for i in range(count):
+        ingredients.append(request.form.get(f"ingredients{i}", ""))
+        amounts.append(request.form.get(f"amounts{i}", ""))
+
+    # 🔹 uudet
+    recipename = request.form.get("recipename", "")
+    description = request.form.get("description", "")
+
+    if "add" in request.form:
+        count += 1
+        ingredients.append("")
+        amounts.append("")
+
+    return render_template(
+        "newrecipe.html",
+        count=count,
+        ingredients=ingredients,
+        amounts=amounts,
+        recipename=recipename,
+        description=description
+    )
+
+@app.route("/submit", methods=["POST"])
 def submit():
-    if request.method == "POST":
-        ingredients = request.form.getlist("ingredients[]")
-        amounts = request.form.getlist("amounts[]")
-        description = request.form["description"]
-        recipename = request.form["recipename"]
-        user_id = session["user_id"]
+    if "user_id" not in session:
+        return "Et ole kirjautunut"
 
+    count = int(request.form.get("count", 1))
+
+    ingredients = []
+    amounts = []
+
+    for i in range(count):
+        ing = request.form.get(f"ingredients{i}", "")
+        amt = request.form.get(f"amounts{i}", "")
+
+        if ing.strip() and amt.strip():
+            ingredients.append(ing)
+            amounts.append(amt)
+
+    description = request.form.get("description", "")
+    recipename = request.form.get("recipename", "")
+    user_id = session["user_id"]
+
+    if recipename == "" or description == "":
+        return "Resepti vaatii lisää tietoja"
+    else:
         recipes.add_recipe(ingredients, amounts, description, recipename, user_id)
 
     return render_template("submit.html")
