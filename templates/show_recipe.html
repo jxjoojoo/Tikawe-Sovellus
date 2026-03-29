@@ -6,8 +6,11 @@
 </head>
 
 <body>
-
   <h1>{{ recipe.name }}</h1>
+  {% if session.user_id == recipe.user_id %}
+    <p>
+      <a href="/edit_recipe/{{ recipe.id }}">Muokkaa reseptiä</a>
+  {% endif %}
   
     <ul>
       {% for item in itemslist %}

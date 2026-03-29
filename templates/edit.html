@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+{% if session.user_id == recipe.user_id %}
+<head>
+  <title>Reseptin muokkaus</title>
+</head>
+<body>
+
+<h1>Muokkaa reseptiä</h1>
+
+<form method="post" action="/edit_recipe/{{ recipe.id }}">
+
+  <p>Reseptin nimi:</p>
+    <input type="text" name="recipename" value="{{ recipe.name }}">
+
+  <p>Ainesosat:</p>
+
+  {% for i in range(count) %}
+    <div>
+      <input type="text" name="ingredients" value="{{ ingredients[i] }}">
+      <button type="submit" name="remove" value="{{ i }}">Poista</button>
+    </div>
+  {% endfor %}
+
+  <button type="submit" name="add" value="1">Lisää ainesosa</button>
+
+  <p>Ohjeet:</p>
+    <textarea name="description">{{ recipe.description }}</textarea>
+
+  <input type="submit" name="save" value="Tallenna">
+
+</form>
+  
+  {%else%}
+  <p>Kirjaudu sisään muokataksesi reseptiä</p>
+    <a href="/login">Kirjaudu </a>
+  {%endif%}
+
+</body>
+</html>

@@ -81,7 +81,6 @@ def create():
     return "Tunnus luotu"
 
 @app.route("/newrecipe", methods=["GET", "POST"])
-@app.route("/newrecipe", methods=["GET", "POST"])
 def newrecipe():
     count = int(request.form.get("count", 1))
 
@@ -92,7 +91,7 @@ def newrecipe():
         ingredients.append(request.form.get(f"ingredients{i}", ""))
         amounts.append(request.form.get(f"amounts{i}", ""))
 
-    # 🔹 uudet
+
     recipename = request.form.get("recipename", "")
     description = request.form.get("description", "")
 
@@ -138,6 +137,63 @@ def submit():
         recipes.add_recipe(ingredients, amounts, description, recipename, user_id)
 
     return render_template("submit.html")
+
+@app.route("/edit_recipe/<int:recipe_id>", methods=["GET", "POST"])
+def edit_recipe(recipe_id):
+
+    recipe = recipes.get_recipe(recipe_id)
+
+    if request.method == "POST":
+        recipename = request.form.get("recipename")
+        description = request.form.get("description")
+        ingredients = request.form.getlist("ingredients")
+
+        if "add" in request.form:
+            ingredients.append("")
+
+        elif "remove" in request.form:
+            index = int(request.form.get("remove"))
+            if index >= 0 and index < count:
+                ingredients.pop(index)
+
+        elif "save" in request.form:
+            ingredients = [i for i in ingredients if i.strip()]
+            ingredients_str = ",".join(ingredients)
+
+            recipes.update_recipe(recipe_id, recipename, ingredients_str, description)
+            return redirect("/recipe/" + str(recipe_id))
+        
+        count = len(ingredients)
+        return render_template("edit.html", recipe=recipe, ingredients=ingredients, count=count)
+
+    ingredients = recipe["items"].split(",") if recipe["items"] else [""]
+    count = len(ingredients)
+
+    return render_template("edit.html", recipe=recipe, ingredients=ingredients, count=count)
+
+@app.route("/update_recipe", methods=["POST"])
+def update_recipe():
+    count = int(request.form.get("count", 1))
+
+    ingredients = []
+    for i in range(count):
+        ingredients.append(request.form.get(f"ingredients{i}"))
+    
+    ingredients = " ".join(ingredients)
+
+    recipename = request.form.get("recipename")
+    recipe_id = request.form.get("recipe_id")
+    description = request.form.get("description")
+
+    recipes.update_recipe(recipe_id, recipename, ingredients, description)
+    print(recipe_id)
+    print(recipename)
+    print(description)
+
+    return redirect("/recipe/" + str(recipe_id))
+
+
+
 
 
 
