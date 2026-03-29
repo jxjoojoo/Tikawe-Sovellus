@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% if session.user_id == recipe.user_id %}
 <head>
   <title>Reseptin poisto</title>
 </head>
@@ -9,6 +10,11 @@
     <input type="submit" name="remove" value="Poista resepti">
     <input type="submit" name="dont" value="Takaisin">
   </form>
+  
+{%else%}
+<p>Kirjaudu sisään poistaaksesi reseptejä</p>
+  <a href="/login">Kirjaudu </a>
+{%endif%}
 
 </body>
 
