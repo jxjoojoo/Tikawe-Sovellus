@@ -5,7 +5,7 @@
 </head>
 <body>
 
-<h1>Haluatko varmasti poistaa reseptin {{ recipename }}?</h1>
+<h1>Haluatko varmasti poistaa reseptin {{ recipe.name }}?</h1>
   <form action="/remove_recipe/{{ recipe.id }}" method="post">
     <input type="submit" name="remove" value="Poista resepti">
     <input type="submit" name="dont" value="Takaisin">
