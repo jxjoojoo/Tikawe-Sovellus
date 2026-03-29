@@ -12,7 +12,18 @@ app.secret_key = config.secret_key
 
 @app.route("/", methods=["GET","POST"])
 def index():
-    return render_template("index.html")
+    all_recipes = recipes.get_recipes()
+
+    return render_template("index.html", all_recipes=all_recipes)
+
+@app.route("/recipe/<int:recipe_id>")
+def show_recipe(recipe_id):
+    recipe = recipes.get_recipe(recipe_id)
+    items = recipe[3]
+    itemslist = items.split(",")
+    print(itemslist)
+    return render_template("show_recipe.html", recipe=recipe, itemslist=itemslist)
+    
 
 @app.route("/login", methods=["GET", "POST"])
 def login():

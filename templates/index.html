@@ -25,6 +25,14 @@
     <a href="/register">Uusi käyttäjä</a>
   </p>
   {% endif %}
+  <h2>Reseptit</h2>
+  
+    <ul>
+    {% for recipe in all_recipes %}
+      <li><a href="/recipe/{{ recipe.id }}">{{ recipe.name }}</li>
+    {% endfor %}
+    </ul>
+  
 </body>
 
 
