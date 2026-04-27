@@ -10,13 +10,13 @@
 <form method="post" action="/edit_recipe/{{ recipe.id }}">
 
   <p>Reseptin nimi:</p>
-    <input type="text" name="recipename" value="{{ recipe.name }}">
+    <input type="text" name="recipename" value="{{ recipe.name }}" maxlength="50 required>
 
   <p>Ainesosat:</p>
 
   {% for i in range(count) %}
     <div>
-      <input type="text" name="ingredients" value="{{ ingredients[i] }}">
+      <input type="text" name="ingredients" value="{{ ingredients[i] }}" maxlength="70">
       <button type="submit" name="remove" value="{{ i }}">Poista</button>
     </div>
   {% endfor %}
@@ -24,7 +24,7 @@
   <button type="submit" name="add" value="1">Lisää ainesosa</button>
 
   <p>Ohjeet:</p>
-    <textarea name="description">{{ recipe.description }}</textarea>
+    <textarea name="description" maxlength="1000">{{ recipe.description }}</textarea>
 
   <input type="submit" name="save" value="Tallenna">
 

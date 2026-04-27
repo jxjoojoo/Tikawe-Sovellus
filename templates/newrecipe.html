@@ -10,18 +10,20 @@
 <form action="/submit" method="post">
 
   <p>Reseptin nimi:</p>
-    <input type="text" name="recipename" value="{{ recipename }}"><br><br>
+    <input type="text" name="recipename" value="{{ recipename }}" maxlength="50" required><br><br>
 
   <p>Ainesosat:</p>
   {% for i in range(count) %}
     <input type="text"
            name="ingredients{{ i }}"
            value="{{ ingredients[i] }}"
+           maxlegth="50"
            placeholder="Ainesosa">
 
     <input type="text"
            name="amounts{{ i }}"
            value="{{ amounts[i] }}"
+           maxlength="20"
            placeholder="Määrä">
     <br>
   {% endfor %}
@@ -32,7 +34,7 @@
   </button>
 
   <p>Ohjeet:</p>
-  <textarea name="description" rows="15" cols="80">{{ description }}</textarea>
+  <textarea name="description" rows="15" cols="80" maxlength="1000" required>{{ description }}</textarea>
 
   <br><br>
   <input type="submit" value="Julkaise">

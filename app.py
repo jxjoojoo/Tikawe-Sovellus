@@ -9,6 +9,9 @@ import recipes
 app = Flask(__name__)
 app.secret_key = config.secret_key
 
+def check_login():
+    if "user_id" not in session:
+        abort(403)
 
 @app.route("/", methods=["GET","POST"])
 def index():
@@ -56,8 +59,9 @@ def login():
 
 @app.route("/logout")
 def logout():
-    del session["username"]
-    del session["user_id"]
+    if "user_id" in session:
+        del session["username"]
+        del session["user_id"]
     return redirect("/")
 
 
@@ -87,6 +91,9 @@ def create():
 
 @app.route("/newrecipe", methods=["GET", "POST"])
 def newrecipe():
+
+    check_login()
+
     count = int(request.form.get("count", 1))
 
     ingredients = []
@@ -99,6 +106,18 @@ def newrecipe():
 
     recipename = request.form.get("recipename", "")
     description = request.form.get("description", "")
+
+    if len(recipename) > 50 or len(recipename) == 0:
+        abort(403)
+    if len(description) > 1000 or len(description) == 0:
+        abort(403)
+
+    for i in ingredients:
+        if len(i) > 50:
+            abort(403)
+    for j in amounts:
+        if len(j) > 20:
+            abort(403)
 
     if "add" in request.form:
         count += 1
