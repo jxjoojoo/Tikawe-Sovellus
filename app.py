@@ -1,6 +1,6 @@
 import sqlite3
 from flask import Flask
-from flask import redirect, render_template, request, session
+from flask import abort, redirect, render_template, request, session
 from werkzeug.security import generate_password_hash, check_password_hash
 import db
 import config
@@ -19,6 +19,8 @@ def index():
 @app.route("/recipe/<int:recipe_id>")
 def show_recipe(recipe_id):
     recipe = recipes.get_recipe(recipe_id)
+    if not recipe:
+        abort(404)
     items = recipe["items"]
     itemslist = items.split(",")
     user_id = recipe["user_id"]
@@ -145,6 +147,10 @@ def submit():
 def edit_recipe(recipe_id):
 
     recipe = recipes.get_recipe(recipe_id)
+    if not recipe:
+        abort(404)
+    if recipe["user_id"] != session["user_id"]:
+        abort(403)
 
     if request.method == "POST":
         recipename = request.form.get("recipename")
@@ -176,6 +182,14 @@ def edit_recipe(recipe_id):
 
 @app.route("/update_recipe", methods=["POST"])
 def update_recipe():
+
+    recipe_id = request.form.get("recipe_id")
+    recipe = recipes.get_recipe(recipe_id)
+    if not recipe:
+        abort(404)
+    if recipe["user_id"] != session["user_id"]:
+        abort(403)
+
     count = int(request.form.get("count", 1))
 
     ingredients = []
@@ -185,7 +199,6 @@ def update_recipe():
     ingredients = " ".join(ingredients)
 
     recipename = request.form.get("recipename")
-    recipe_id = request.form.get("recipe_id")
     description = request.form.get("description")
 
     recipes.update_recipe(recipe_id, recipename, ingredients, description)
@@ -194,6 +207,12 @@ def update_recipe():
 
 @app.route("/remove_recipe/<int:recipe_id>", methods=["GET", "POST"])
 def remove_recipe(recipe_id):
+
+    recipe = recipes.get_recipe(recipe_id)
+    if not recipe:
+        abort(404)
+    if recipe["user_id"] != session["user_id"]:
+        abort(403)
 
     if request.method == "GET":
         recipe = recipes.get_recipe(recipe_id)

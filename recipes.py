@@ -34,7 +34,8 @@ def get_recipe(recipe_id):
             FROM Recipes
             JOIN Users ON recipes.user_id = Users.id
             AND recipes.id = ?"""
-    return db.query(sql, [recipe_id])[0]
+    result = db.query(sql, [recipe_id])
+    return result[0] if result else None
     
 def update_recipe(recipe_id, recipe_name, items, description):
     sql = """UPDATE Recipes SET name = ?,
