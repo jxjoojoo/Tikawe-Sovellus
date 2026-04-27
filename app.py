@@ -81,7 +81,7 @@ def create():
     except sqlite3.IntegrityError:
         return "VIRHE: tunnus on jo varattu"
 
-    return "Tunnus luotu"
+    return render_template("user_created.html", username=username)
 
 @app.route("/newrecipe", methods=["GET", "POST"])
 def newrecipe():
