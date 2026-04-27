@@ -23,7 +23,7 @@
     
    <p>{{ recipe.description }}</p>
    
-   <p>Reseptin tekijä: {{ username }}</p>
+   <p>Reseptin tekijä: <a href="/user/{{ recipe.user_id }}"> {{ username }}</p>
    
      <a href="/">Takaisin</a>
   

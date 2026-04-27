@@ -5,6 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import db
 import config
 import recipes
+import users
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
@@ -107,9 +108,9 @@ def newrecipe():
     recipename = request.form.get("recipename", "")
     description = request.form.get("description", "")
 
-    if len(recipename) > 50 or len(recipename) == 0:
+    if not recipename or len(recipename) > 50:
         abort(403)
-    if len(description) > 1000 or len(description) == 0:
+    if not description or len(description) > 1000:
         abort(403)
 
     for i in ingredients:
@@ -219,6 +220,10 @@ def update_recipe():
 
     recipename = request.form.get("recipename")
     description = request.form.get("description")
+    if not recipename or len(recipename) > 50:
+        abort(403)
+    if not description or len(description) > 1000:
+        abort(403)
 
     recipes.update_recipe(recipe_id, recipename, ingredients, description)
 
@@ -256,3 +261,13 @@ def find_recipe():
         results = []
 
     return render_template("find_recipe.html", query=query, results=results)
+
+@app.route("/user/<int:user_id>")
+def show_user(user_id):
+    user = users.get_user(user_id)
+    if not user:
+        abort(404)
+        
+    recipes = users.get_recipes(user_id)
+
+    return render_template("show_user.html", user=user, recipes=recipes)

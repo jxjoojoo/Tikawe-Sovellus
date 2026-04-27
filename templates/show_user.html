@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Käyttäjä {{ user.username }} </title>
+</head>
+
+<body>
+  <h1>Käyttäjä {{ user.username }} </h1>
+  {% if session.user_id == user.id %}
+    <p>
+      Olet kirjautunut tälle käyttäjälle
+    </p>
+  {% endif %}
+  <p>
+    Käyttäjä on tehnyt {{ recipes | count }} reseptiä.
+  </p>
+  <h2>
+    <ul>
+      {% for recipe in recipes %}
+      <li>
+        <a href="/recipe/{{ recipe.id }}">{{ recipe.name }}</a>
+      </li>
+      {% endfor %}
+    </ul>
+  </h2>
+     <a href="/">Takaisin</a>
+  
+</body/>
+</html>
