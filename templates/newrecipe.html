@@ -34,7 +34,32 @@
   </button>
 
   <p>Ohjeet:</p>
-  <textarea name="description" rows="15" cols="80" maxlength="1000" required>{{ description }}</textarea>
+  <textarea name="description" rows="15" cols="80" maxlength="1000">{{ description }}</textarea>
+  
+  <p>
+    Luokittelu:
+    <select name="section">
+      <option value="">(valitse)</option>
+      <option value="Alkuruuat" {% if section == "Alkuruuat" %}selected{% endif %}>Alkuruuat</option>
+      <option value="Pääruuat" {% if section == "Pääruuat" %}selected{% endif %}>Pääruuat</option>
+      <option value="Jälkiruuat" {% if section == "Jälkiruuat" %}selected{% endif %}>Jälkiruuat</option>
+      <option value="Komponentit" {% if section == "Komponentit" %}selected{% endif %}>Komponentit</option>
+    </select>
+  
+  <p>
+    Aika:
+    <input type="number"
+           name ="hours"
+           value="{{ hours }}"
+           placeholder="Tunnit"
+           max="48">
+    <input type="number"
+           name="minutes"
+           value="{{ minutes }}"
+           placeholder="Minuutit"
+           max="59">
+  
+  </p>
 
   <br><br>
   <input type="submit" value="Julkaise">

@@ -2,7 +2,6 @@ CREATE TABLE Users (
     id INTEGER PRIMARY KEY,
     username TEXT UNIQUE,
     password_hash TEXT,
-    recipes_added INTEGER DEFAULT 0
 );
 
 CREATE TABLE Recipes (
@@ -12,4 +11,12 @@ CREATE TABLE Recipes (
     items TEXT,
     description TEXT
 );
+
+CREATE TABLE Recipe_classes (
+    id INTEGER PRIMARY KEY,
+    recipe_id REFERENCES Recipes,
+    title TEXT,
+    time INTEGER
+);
+    
 

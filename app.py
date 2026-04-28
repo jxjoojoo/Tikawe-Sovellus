@@ -22,16 +22,26 @@ def index():
 
 @app.route("/recipe/<int:recipe_id>")
 def show_recipe(recipe_id):
+
     recipe = recipes.get_recipe(recipe_id)
     if not recipe:
         abort(404)
+
     items = recipe["items"]
     itemslist = items.split(",")
     user_id = recipe["user_id"]
+
     sql = "SELECT username FROM Users WHERE id = ?"
     username = db.query(sql, [user_id])[0][0]
-    print(username)
-    return render_template("show_recipe.html", recipe=recipe, itemslist=itemslist, username=username)
+    classes = recipes.get_classes(recipe_id)
+    
+    section = classes[0] if classes else ""
+    time = int(classes[1]) if classes else 0
+    hours = time // 60
+    minutes = time % 60
+
+    return render_template("show_recipe.html", recipe=recipe, itemslist=itemslist,
+                            username=username, section=section, hours=hours, minutes=minutes)
     
 
 @app.route("/login", methods=["GET", "POST"])
@@ -43,20 +53,14 @@ def login():
         username = request.form["username"]
         password = request.form["password"]
     
-        sql = "SELECT id, password_hash FROM Users WHERE username = ?"
-        result = db.query(sql, [username])
-        if len(result) == 0:
-            return "Väärä runnus tai salasana"
-        else:
-            user_id = result[0][0]
-            password_hash = result[0][1]
+    user_id = users.check_login_id(username, password)
         
-        if check_password_hash(password_hash, password):
-            session["username"] = username
-            session["user_id"] = user_id
-            return redirect("/")
-        else:
-            return "Väärä runnus tai salasana"
+    if user_id:
+        session["username"] = username
+        session["user_id"] = user_id
+        return redirect("/")
+    else:
+        return "Väärä runnus tai salasana"
 
 @app.route("/logout")
 def logout():
@@ -77,14 +81,12 @@ def create():
     password2 = request.form["password2"]
     if password1 != password2:
         return "VIRHE: salasanat eivät ole samat"
-    password_hash = generate_password_hash(password1)
 
     if len(username) == 0 or len(password1) == 0:
         return render_template("register.html")
-
+    
     try:
-        sql = "INSERT INTO Users (username, password_hash) VALUES (?, ?)"
-        db.execute(sql, [username, password_hash])
+        users.create_user(username, password1)
     except sqlite3.IntegrityError:
         return "VIRHE: tunnus on jo varattu"
 
@@ -104,26 +106,16 @@ def newrecipe():
         ingredients.append(request.form.get(f"ingredients{i}", ""))
         amounts.append(request.form.get(f"amounts{i}", ""))
 
-
-    recipename = request.form.get("recipename", "")
-    description = request.form.get("description", "")
-
-    if not recipename or len(recipename) > 50:
-        abort(403)
-    if not description or len(description) > 1000:
-        abort(403)
-
-    for i in ingredients:
-        if len(i) > 50:
-            abort(403)
-    for j in amounts:
-        if len(j) > 20:
-            abort(403)
-
     if "add" in request.form:
         count += 1
         ingredients.append("")
         amounts.append("")
+    
+    recipename = request.form.get("recipename", "")
+    description = request.form.get("description", "")
+    minutes = request.form.get("minutes")
+    hours = request.form.get("hours")
+    section = request.form.get("section")
 
     return render_template(
         "newrecipe.html",
@@ -131,7 +123,11 @@ def newrecipe():
         ingredients=ingredients,
         amounts=amounts,
         recipename=recipename,
-        description=description
+        description=description,
+        hours=hours,
+        minutes=minutes,
+        section=section
+        
     )
 
 @app.route("/submit", methods=["POST"])
@@ -151,15 +147,32 @@ def submit():
         if ing.strip() and amt.strip():
             ingredients.append(ing)
             amounts.append(amt)
-
-    description = request.form.get("description", "")
+    
+    hours = int(request.form.get("hours") or 0)
+    minutes = int(request.form.get("minutes") or 0)
+    time = hours * 60 + minutes
+    section = request.form.get("section")
     recipename = request.form.get("recipename", "")
+    description = request.form.get("description", "")
+
+    if not recipename or len(recipename) > 50:
+        abort(403)
+    if not description or len(description) > 1000:
+        abort(403)
+
+    for i in ingredients:
+        if len(i) > 50:
+            abort(403)
+    for j in amounts:
+        if len(j) > 20:
+            abort(403)
+
     user_id = session["user_id"]
 
     if recipename == "" or description == "":
         return "Resepti vaatii lisää tietoja"
     else:
-        recipes.add_recipe(ingredients, amounts, description, recipename, user_id)
+        recipes.add_recipe(ingredients, amounts, description, recipename, user_id, section, time)
 
     return render_template("submit.html")
 
@@ -167,67 +180,80 @@ def submit():
 def edit_recipe(recipe_id):
 
     recipe = recipes.get_recipe(recipe_id)
+
     if not recipe:
         abort(404)
     if recipe["user_id"] != session["user_id"]:
         abort(403)
 
     if request.method == "POST":
+
         recipename = request.form.get("recipename")
         description = request.form.get("description")
-        ingredients = request.form.getlist("ingredients")
+        count = int(request.form.get("count", 1))
 
+        ingredients = []
+
+        for i in range(count):
+            ing = request.form.get(f"ingredients{i}", "")
+            if ing.strip():
+                ingredients.append(ing)
+
+        hours = int(request.form.get("hours") or 0)
+        minutes = int(request.form.get("minutes") or 0)
+        time = hours * 60 + minutes
+        section = request.form.get("section")
+        count = len(ingredients)
+
+    
         if "add" in request.form:
             ingredients.append("")
 
         if "remove" in request.form:
             index = int(request.form.get("remove"))
-            if index >= 0 and index < count:
+            if 0 <= index < len(ingredients):
                 ingredients.pop(index)
 
         if "save" in request.form:
-            ingredients = [i for i in ingredients if i.strip()]
-            ingredients_str = ",".join(ingredients)
-
-            recipes.update_recipe(recipe_id, recipename, ingredients_str, description)
+            ingredients_str = ",".join(i for i in ingredients if i.strip())
+            update_recipe(recipe_id, recipename, ingredients_str, description, section, time)
             return redirect("/recipe/" + str(recipe_id))
         
         count = len(ingredients)
-        return render_template("edit.html", recipe=recipe, ingredients=ingredients, count=count)
+        return render_template("edit.html", recipe=recipe, ingredients=ingredients, count=count, section=section, hours=hours, minutes=minutes)
+
+
+    classes = recipes.get_classes(recipe_id)
+    section = classes[0] if classes else ""
+    time = classes[1] if classes else 0
 
     ingredients = recipe["items"].split(",") if recipe["items"] else [""]
     count = len(ingredients)
 
-    return render_template("edit.html", recipe=recipe, ingredients=ingredients, count=count)
+    hours = time // 60
+    minutes = time % 60
 
-@app.route("/update_recipe", methods=["POST"])
-def update_recipe():
+    return render_template("edit.html", recipe=recipe, ingredients=ingredients, 
+                                        count=count, section=section, hours=hours, minutes=minutes)
 
-    recipe_id = request.form.get("recipe_id")
+def update_recipe(recipe_id, recipename, ingredients, description, section, time):
     recipe = recipes.get_recipe(recipe_id)
+    print("recipe user_id:", recipe["user_id"], type(recipe["user_id"]))
+    print("session user_id:", session["user_id"], type(session["user_id"]))
+    print("recipe_id:", recipe_id, type(recipe_id))
+    print("recipename:", repr(recipename))
+    print("description:", repr(description))
     if not recipe:
         abort(404)
     if recipe["user_id"] != session["user_id"]:
         abort(403)
-
-    count = int(request.form.get("count", 1))
-
-    ingredients = []
-    for i in range(count):
-        ingredients.append(request.form.get(f"ingredients{i}"))
-    
-    ingredients = " ".join(ingredients)
-
-    recipename = request.form.get("recipename")
-    description = request.form.get("description")
     if not recipename or len(recipename) > 50:
         abort(403)
     if not description or len(description) > 1000:
+        print("No description")
         abort(403)
-
-    recipes.update_recipe(recipe_id, recipename, ingredients, description)
-
-    return redirect("/recipe/" + str(recipe_id))
+    
+    recipes.update_recipe(recipe_id, recipename, ingredients, description, section, time)
 
 @app.route("/remove_recipe/<int:recipe_id>", methods=["GET", "POST"])
 def remove_recipe(recipe_id):
@@ -267,7 +293,6 @@ def show_user(user_id):
     user = users.get_user(user_id)
     if not user:
         abort(404)
-        
-    recipes = users.get_recipes(user_id)
 
+    recipes = users.get_recipes(user_id)
     return render_template("show_user.html", user=user, recipes=recipes)

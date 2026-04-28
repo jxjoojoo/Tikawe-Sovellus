@@ -1,6 +1,6 @@
 import db, sqlite3
 
-def add_recipe(ingredients, amounts, description, recipename, user_id):
+def add_recipe(ingredients, amounts, description, recipename, user_id, section, time):
 
     items = ""
     if not ingredients:
@@ -19,6 +19,12 @@ def add_recipe(ingredients, amounts, description, recipename, user_id):
         db.execute(sql, [recipename, user_id, description, items])
     except sqlite3.IntegrityError:
         return "Tämä nimi jo käytössä reseptillä"
+    
+    recipe_id = db.last_insert_id()
+
+    sql = "INSERT INTO Recipe_classes (recipe_id, title, time) VALUES (?,?,?)"
+    db.execute(sql, [recipe_id, section, time])
+
 
 def get_recipes():
     sql = "SELECT id, name, description, items FROM Recipes ORDER BY id DESC;"
@@ -37,13 +43,20 @@ def get_recipe(recipe_id):
     result = db.query(sql, [recipe_id])
     return result[0] if result else None
     
-def update_recipe(recipe_id, recipe_name, items, description):
+def update_recipe(recipe_id, recipe_name, items, description, section, time):
     sql = """UPDATE Recipes SET name = ?,
             description = ?,
             items = ?
             WHERE id = ?"""
 
     db.execute(sql, [recipe_name, description, items, recipe_id])
+
+    sql = """UPDATE Recipe_classes SET
+            title = ?,
+            time = ?
+            WHERE recipe_id = ?
+            """
+    db.execute(sql, [section, time, recipe_id])
 
 def remove_recipe(recipe_id):
     sql = "DELETE FROM Recipes WHERE id = ?"
@@ -56,3 +69,10 @@ def find_recipes(query):
             ORDER BY id DESC"""
 
     return db.query(sql, ["%" + query + "%", "%" + query + "%", "%" + query + "%"])
+
+def get_classes(recipe_id):
+    sql = "SELECT title, time FROM Recipe_classes WHERE recipe_id = ?"
+    result = db.query(sql, [recipe_id])
+    return result[0] if result else None
+
+

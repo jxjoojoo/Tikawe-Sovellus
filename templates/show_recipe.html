@@ -22,10 +22,20 @@
     </ul>
     
    <p>{{ recipe.description }}</p>
+   <p>
+      {% if section %}
+      Luokittelu: {{ section }}
+      {% endif %}
+   </p>
+      Aika:
+        <p>
+          {% if hours > 0 %}{{ hours }} tuntia, {% endif %}
+          {{ minutes }} minuuttia
+        </p>
    
-   <p>Reseptin tekijä: <a href="/user/{{ recipe.user_id }}"> {{ username }}</p>
+   <p>Reseptin tekijä: <a href="/user/{{ recipe.user_id }}"> {{ username }}</a></p>
    
      <a href="/">Takaisin</a>
   
-</body/>
+</body>
 </html>
