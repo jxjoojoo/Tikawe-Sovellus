@@ -12,11 +12,19 @@ CREATE TABLE Recipes (
     description TEXT
 );
 
+CREATE TABLE Classes (
+    id INTEGER PRIMARY KEY,
+    title TEXT,
+    value TEXT
+);
+    
 CREATE TABLE Recipe_classes (
     id INTEGER PRIMARY KEY,
     recipe_id REFERENCES Recipes,
     title TEXT,
     time INTEGER
 );
+
+
     
 

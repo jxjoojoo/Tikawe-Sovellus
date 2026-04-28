@@ -75,4 +75,23 @@ def get_classes(recipe_id):
     result = db.query(sql, [recipe_id])
     return result[0] if result else None
 
+def get_all_classes():
+    sql = "SELECT title, value FROM classes ORDER BY id"
+    result = list(db.query(sql))
+    
+    classes = {}
+
+    for title, value in result:
+        if title not in classes:
+            classes[title] = []
+        classes[title].append(value)
+
+    print("classes tyyppi:", type(classes))
+    print("classes arvo:", classes)
+    return classes
+
+    return classes
+
+
+
 

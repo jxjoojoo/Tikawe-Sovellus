@@ -17,7 +17,7 @@
     <input type="text"
            name="ingredients{{ i }}"
            value="{{ ingredients[i] }}"
-           maxlegth="50"
+           maxlength="50"
            placeholder="Ainesosa">
 
     <input type="text"
@@ -35,17 +35,20 @@
 
   <p>Ohjeet:</p>
   <textarea name="description" rows="15" cols="80" maxlength="1000">{{ description }}</textarea>
-  
+  {% for category, options in classes.items() %}
   <p>
-    Luokittelu:
-    <select name="section">
+    {{ category }}: <br>
+    <select name="class_{{ category }}">
       <option value="">(valitse)</option>
-      <option value="Alkuruuat" {% if section == "Alkuruuat" %}selected{% endif %}>Alkuruuat</option>
-      <option value="Pääruuat" {% if section == "Pääruuat" %}selected{% endif %}>Pääruuat</option>
-      <option value="Jälkiruuat" {% if section == "Jälkiruuat" %}selected{% endif %}>Jälkiruuat</option>
-      <option value="Komponentit" {% if section == "Komponentit" %}selected{% endif %}>Komponentit</option>
+      {% for option in options %}
+        <option value="{{ option }}"
+          {% if choices[category] == option %}selected{% endif %}>
+          {{ option }}
+        </option>
+      {% endfor %}
     </select>
-  
+  </p>
+  {% endfor %}
   <p>
     Aika:
     <input type="number"

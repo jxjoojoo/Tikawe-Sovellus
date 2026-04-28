@@ -41,7 +41,8 @@ def show_recipe(recipe_id):
     minutes = time % 60
 
     return render_template("show_recipe.html", recipe=recipe, itemslist=itemslist,
-                            username=username, section=section, hours=hours, minutes=minutes)
+                            username=username, section=section, hours=hours,
+                            minutes=minutes)
     
 
 @app.route("/login", methods=["GET", "POST"])
@@ -116,6 +117,16 @@ def newrecipe():
     minutes = request.form.get("minutes")
     hours = request.form.get("hours")
     section = request.form.get("section")
+    classes = recipes.get_all_classes()
+    choices = {}
+    for c in classes:
+        choices[c] = "(valitse)"
+
+    if request.method == "POST":
+        choices = {}
+        for category in classes:
+            value = request.form.get(f"class_{category}", "")
+            choices[category] = value if value else "(valitse)"
 
     return render_template(
         "newrecipe.html",
@@ -126,7 +137,9 @@ def newrecipe():
         description=description,
         hours=hours,
         minutes=minutes,
-        section=section
+        section=section,
+        classes=classes,
+        choices=choices
         
     )
 
@@ -154,6 +167,14 @@ def submit():
     section = request.form.get("section")
     recipename = request.form.get("recipename", "")
     description = request.form.get("description", "")
+    classes = []
+
+
+    for entry in request.form.getlist("classes"):
+        if entry:
+            parts = entry.split(":")
+            classes.append((parts[0], parts[1]))
+
 
     if not recipename or len(recipename) > 50:
         abort(403)
@@ -238,11 +259,7 @@ def edit_recipe(recipe_id):
 
 def update_recipe(recipe_id, recipename, ingredients, description, section, time):
     recipe = recipes.get_recipe(recipe_id)
-    print("recipe user_id:", recipe["user_id"], type(recipe["user_id"]))
-    print("session user_id:", session["user_id"], type(session["user_id"]))
-    print("recipe_id:", recipe_id, type(recipe_id))
-    print("recipename:", repr(recipename))
-    print("description:", repr(description))
+
     if not recipe:
         abort(404)
     if recipe["user_id"] != session["user_id"]:
