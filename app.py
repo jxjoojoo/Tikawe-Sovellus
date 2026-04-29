@@ -1,6 +1,6 @@
 import sqlite3
 from flask import Flask
-from flask import abort, redirect, render_template, request, session
+from flask import abort, redirect, render_template, flash, request, session
 from werkzeug.security import generate_password_hash, check_password_hash
 import db
 import config
@@ -53,6 +53,8 @@ def login():
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
+        if not username or not password:
+            return redirect("/login")
     
     user_id = users.check_login_id(username, password)
         
@@ -61,7 +63,8 @@ def login():
         session["user_id"] = user_id
         return redirect("/")
     else:
-        return "Väärä runnus tai salasana"
+        flash("Väärä runnus tai salasana")
+        return redirect("/login")
 
 @app.route("/logout")
 def logout():
@@ -76,20 +79,24 @@ def register():
     return render_template("register.html")
 
 @app.route("/create", methods=["POST"])
-def create():
+def create_new_account():
     username = request.form["username"]
     password1 = request.form["password1"]
     password2 = request.form["password2"]
+
     if password1 != password2:
-        return "VIRHE: salasanat eivät ole samat"
+        flash("VIRHE: Salasanat eivät ole samat")
+        return redirect("/register")
 
     if len(username) == 0 or len(password1) == 0:
-        return render_template("register.html")
+        flash("VIRHE: Puuttuvia kenttiä")
+        return redirect("/register")
     
     try:
         users.create_user(username, password1)
     except sqlite3.IntegrityError:
-        return "VIRHE: tunnus on jo varattu"
+        flash("VIRHE: Tunnus on jo varattu")
+        return redirect("/register")
 
     return render_template("user_created.html", username=username)
 
@@ -119,6 +126,7 @@ def newrecipe():
     section = request.form.get("section")
     classes = recipes.get_all_classes()
     choices = {}
+    
     for c in classes:
         choices[c] = "(valitse)"
 
@@ -144,7 +152,7 @@ def newrecipe():
     )
 
 @app.route("/submit", methods=["POST"])
-def submit():
+def submit_new_recipe():
     if "user_id" not in session:
         return "Et ole kirjautunut"
 
@@ -162,7 +170,12 @@ def submit():
             amounts.append(amt)
     
     hours = int(request.form.get("hours") or 0)
+    if hours < 0:
+        return redirect("/new_recipe")
     minutes = int(request.form.get("minutes") or 0)
+    if minutes < 0:
+        return redirect("/new_recipe")
+    
     time = hours * 60 + minutes
     section = request.form.get("section")
     recipename = request.form.get("recipename", "")

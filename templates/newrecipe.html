@@ -55,11 +55,13 @@
            name ="hours"
            value="{{ hours }}"
            placeholder="Tunnit"
+           min="0"
            max="48">
     <input type="number"
            name="minutes"
            value="{{ minutes }}"
            placeholder="Minuutit"
+           min="0"
            max="59">
   
   </p>
@@ -68,6 +70,8 @@
   <input type="submit" value="Julkaise">
 
 </form>
+  </br>
+  <a href="/">Etusivulle</a>
   
   {%else%}
   <p>Kirjaudu ensin sisään lisätäksesi reseptin</p>

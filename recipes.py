@@ -86,11 +86,8 @@ def get_all_classes():
             classes[title] = []
         classes[title].append(value)
 
-    print("classes tyyppi:", type(classes))
-    print("classes arvo:", classes)
     return classes
 
-    return classes
 
 
 

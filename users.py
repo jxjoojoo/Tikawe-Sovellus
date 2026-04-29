@@ -23,13 +23,13 @@ def create_user(name, password):
 
 def check_login_id(name, password):
     sql = "SELECT id, password_hash FROM Users WHERE username = ?"
-    result = db.query(sql, [name])[0]
+    result = db.query(sql, [name])
 
     if not result:
         return None
     else:
-        user_id = result["id"]
-        password_hash = result["password_hash"]
+        user_id = result[0]["id"]
+        password_hash = result[0]["password_hash"]
 
     if check_password_hash(password_hash, password):
         return user_id
