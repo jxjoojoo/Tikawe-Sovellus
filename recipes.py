@@ -13,10 +13,10 @@ def add_recipe(ingredients, amounts, description, recipename, user_id, section, 
         ]
         items = ",".join(items_list)
 
-    sql = """INSERT INTO Recipes (name, user_id, description, items) VALUES
-    (?, ?, ?, ?)"""
+    sql = """INSERT INTO Recipes (name, user_id, description, items, time) VALUES
+    (?, ?, ?, ?, ?)"""
     try:
-        db.execute(sql, [recipename, user_id, description, items])
+        db.execute(sql, [recipename, user_id, description, items, time])
     except sqlite3.IntegrityError:
         return "Tämä nimi jo käytössä reseptillä"
     
@@ -35,6 +35,7 @@ def get_recipe(recipe_id):
             recipes.id,
             recipes.description,
             recipes.items,
+            recipes.time,
             users.username,
             users.id user_id
             FROM Recipes
@@ -43,22 +44,28 @@ def get_recipe(recipe_id):
     result = db.query(sql, [recipe_id])
     return result[0] if result else None
     
-def update_recipe(recipe_id, recipe_name, items, description, section, time):
+def update_recipe(recipe_id, recipe_name, items, description, section, time, classes, choices):
     sql = """UPDATE Recipes SET name = ?,
             description = ?,
-            items = ?
+            items = ?,
+            time = ?
             WHERE id = ?"""
 
-    db.execute(sql, [recipe_name, description, items, recipe_id])
+    db.execute(sql, [recipe_name, description, items, time, recipe_id])
 
-    sql = """UPDATE Recipe_classes SET
-            title = ?,
-            time = ?
-            WHERE recipe_id = ?
-            """
-    db.execute(sql, [section, time, recipe_id])
+    sql = "DELETE FROM Recipe_classes WHERE recipe_id = ?"
+    db.execute(sql, [recipe_id])
+
+    sql = "INSERT INTO Recipe_classes (recipe_id, title, value) VALUES (?, ?, ?)"
+    for category, value in choices.items():
+        db.execute(sql, [recipe_id, category, value])
+
 
 def remove_recipe(recipe_id):
+
+    sql = "DELETE FROM Recipe_classes WHERE recipe_id = ?"
+    db.execute(sql, [recipe_id])
+
     sql = "DELETE FROM Recipes WHERE id = ?"
     db.execute(sql, [recipe_id])
 
@@ -71,14 +78,12 @@ def find_recipes(query):
     return db.query(sql, ["%" + query + "%", "%" + query + "%", "%" + query + "%"])
 
 def get_classes(recipe_id):
-    sql = "SELECT title, time FROM Recipe_classes WHERE recipe_id = ?"
-    result = db.query(sql, [recipe_id])
-    return result[0] if result else None
+    sql = "SELECT title, value FROM Recipe_classes WHERE recipe_id = ?"
+    return db.query(sql, [recipe_id])
 
 def get_all_classes():
     sql = "SELECT title, value FROM classes ORDER BY id"
     result = list(db.query(sql))
-    
     classes = {}
 
     for title, value in result:

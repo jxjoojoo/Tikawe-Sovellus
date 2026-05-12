@@ -27,36 +27,41 @@
   <button type="submit" name="add" value="1">Lisää ainesosa</button>
 
   <p>Ohjeet:</p>
-    <textarea name="description" rows="15" cols="80" maxlength="1000">{{ recipe.description }}</textarea>
+    <textarea name="description" rows="15" cols="80" maxlength="1000">{{ description }}</textarea>
   
-    <p>
-    Luokittelu:
-    <select name="section">
+  {% for category, options in classes.items() %}
+  <p>
+    {{ category }}: <br>
+    <select name="class_{{ category }}">
       <option value="">(valitse)</option>
-      <option value="Alkuruuat" {% if section == "Alkuruuat" %}selected{% endif %}>Alkuruuat</option>
-      <option value="Pääruuat" {% if section == "Pääruuat" %}selected{% endif %}>Pääruuat</option>
-      <option value="Jälkiruuat" {% if section == "Jälkiruuat" %}selected{% endif %}>Jälkiruuat</option>
-      <option value="Komponentit" {% if section == "Komponentit" %}selected{% endif %}>Komponentit</option>
+      {% for option in options %}
+        <option value="{{ option }}"
+          {% if choices[category] == option %}selected{% endif %}>{{ option }}
+        </option>
+      {% endfor %}
     </select>
-  
+  </p>
+  {% endfor %}
   <p>
     Aika:
     <input type="number"
            name ="hours"
            value="{{ hours }}"
            placeholder="Tunnit"
+           min="0"
            max="48">
     <input type="number"
            name="minutes"
            value="{{ minutes }}"
            placeholder="Minuutit"
+           min="0"
            max="59">
   
   </p>
-
-  <input type="submit" name="save" value="Tallenna">
-
+  <input type="submit" name="save" value="Julkaise">
 </form>
+  </br>
+  <a href="/recipe/{{ recipe.id }}">Takaisin</a>
   
   {%else%}
   <p>Et ole reseptin tekijä!</p>

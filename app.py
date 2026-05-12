@@ -34,15 +34,14 @@ def show_recipe(recipe_id):
     sql = "SELECT username FROM Users WHERE id = ?"
     username = db.query(sql, [user_id])[0][0]
     classes = recipes.get_classes(recipe_id)
-    
-    section = classes[0] if classes else ""
-    time = int(classes[1]) if classes else 0
+
+    time = int(recipe["time"]) if recipe["time"] else 0
     hours = time // 60
     minutes = time % 60
 
     return render_template("show_recipe.html", recipe=recipe, itemslist=itemslist,
-                            username=username, section=section, hours=hours,
-                            minutes=minutes)
+                            username=username, hours=hours,
+                            minutes=minutes, classes=classes)
     
 
 @app.route("/login", methods=["GET", "POST"])
@@ -126,7 +125,7 @@ def newrecipe():
     section = request.form.get("section")
     classes = recipes.get_all_classes()
     choices = {}
-    
+
     for c in classes:
         choices[c] = "(valitse)"
 
@@ -221,7 +220,6 @@ def edit_recipe(recipe_id):
         abort(403)
 
     if request.method == "POST":
-
         recipename = request.form.get("recipename")
         description = request.form.get("description")
         count = int(request.form.get("count", 1))
@@ -235,11 +233,19 @@ def edit_recipe(recipe_id):
 
         hours = int(request.form.get("hours") or 0)
         minutes = int(request.form.get("minutes") or 0)
+        if minutes < 0:
+            return redirect(f"/edit_recipe/{recipe_id}")
+        
         time = hours * 60 + minutes
         section = request.form.get("section")
-        count = len(ingredients)
+        classes = recipes.get_all_classes()
 
-    
+        choices = {}
+        for group in classes.keys():
+            if request.form.get(f"class_{group}"):
+                choices[group] = request.form.get(f"class_{group}")
+
+
         if "add" in request.form:
             ingredients.append("")
 
@@ -250,27 +256,51 @@ def edit_recipe(recipe_id):
 
         if "save" in request.form:
             ingredients_str = ",".join(i for i in ingredients if i.strip())
-            update_recipe(recipe_id, recipename, ingredients_str, description, section, time)
+            update_recipe(recipe_id, recipename, ingredients_str, description, section, time, classes, choices)
             return redirect("/recipe/" + str(recipe_id))
         
         count = len(ingredients)
-        return render_template("edit.html", recipe=recipe, ingredients=ingredients, count=count, section=section, hours=hours, minutes=minutes)
+        return render_template("edit.html", recipe=recipe,
+                                            ingredients=ingredients,
+                                            description=description,
+                                            count=count, section=section,
+                                            hours=hours, minutes=minutes,
+                                            classes=classes, choices=choices)
 
 
-    classes = recipes.get_classes(recipe_id)
-    section = classes[0] if classes else ""
-    time = classes[1] if classes else 0
 
     ingredients = recipe["items"].split(",") if recipe["items"] else [""]
+    description = recipe["description"]
     count = len(ingredients)
+
+    classes = recipes.get_all_classes()
+
+    classes_data = recipes.get_classes(recipe_id)
+
+    section = classes_data[0] if classes_data else ""
+    time = int(recipe["time"]) if recipe["time"] else 0
 
     hours = time // 60
     minutes = time % 60
 
-    return render_template("edit.html", recipe=recipe, ingredients=ingredients, 
-                                        count=count, section=section, hours=hours, minutes=minutes)
+    choices = {category: "(valitse)" for category in classes}
+    for row in classes_data:
+        title = row[0]  # esim "Tyyppi"
+        value = row[1]  # esim "Alkuruuat"
+        choices[title] = value
+    #classes.items: dict_items([('Tyyppi', ['Alkuruuat', 'Pääruuat', 'Jälkiruuat', 'Komponentit']), ('Kesto', ['Nopea', 'Semi', 'Perus', 'Hidas'])])
+    for category, options in classes.items():
+        if section in options:
+            choices[category] = section
+    
+    print("classes_data:", [(row[0], row[1]) for row in classes_data])
+    print("choices:", choices)
 
-def update_recipe(recipe_id, recipename, ingredients, description, section, time):
+    return render_template("edit.html", recipe=recipe, ingredients=ingredients, description=description,
+                                        count=count, section=section, hours=hours,
+                                        minutes=minutes, classes=classes, choices=choices)
+
+def update_recipe(recipe_id, recipename, ingredients, description, section, time, classes, choices):
     recipe = recipes.get_recipe(recipe_id)
 
     if not recipe:
@@ -283,7 +313,7 @@ def update_recipe(recipe_id, recipename, ingredients, description, section, time
         print("No description")
         abort(403)
     
-    recipes.update_recipe(recipe_id, recipename, ingredients, description, section, time)
+    recipes.update_recipe(recipe_id, recipename, ingredients, description, section, time, classes, choices)
 
 @app.route("/remove_recipe/<int:recipe_id>", methods=["GET", "POST"])
 def remove_recipe(recipe_id):

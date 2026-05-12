@@ -9,10 +9,11 @@ CREATE TABLE Recipes (
     name TEXT UNIQUE,
     user_id INTEGER REFERENCES Users,
     items TEXT,
+    time INTEGER,
     description TEXT
 );
 
-CREATE TABLE Classes (
+ CREATE TABLE Classes (
     id INTEGER PRIMARY KEY,
     title TEXT,
     value TEXT
@@ -22,7 +23,7 @@ CREATE TABLE Recipe_classes (
     id INTEGER PRIMARY KEY,
     recipe_id REFERENCES Recipes,
     title TEXT,
-    time INTEGER
+    value INTEGER
 );
 
 
