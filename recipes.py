@@ -1,7 +1,6 @@
 import db, sqlite3
 
 def add_recipe(ingredients, amounts, description, recipename, user_id, section, time, choices):
-
     items = ""
     if not ingredients:
         items = "Ei ainesosia"
@@ -89,8 +88,11 @@ def get_image(image_id):
     result = db.query(sql, [image_id])
     return result[0][0] if result else None
 
-def remove_recipe(recipe_id):
+def remove_image(recipe_id, image_id):
+    sql = "DELETE FROM Images WHERE recipe_id = ? AND id = ?"
+    db.execute(sql, [recipe_id, image_id])
 
+def remove_recipe(recipe_id):
     sql = "DELETE FROM Recipe_classes WHERE recipe_id = ?"
     db.execute(sql, [recipe_id])
 

@@ -1,7 +1,6 @@
 import sqlite3
 from flask import Flask
 from flask import abort, redirect, render_template, flash, request, session, make_response
-from werkzeug.security import generate_password_hash, check_password_hash
 import db
 import config
 import recipes
@@ -117,7 +116,22 @@ def add_image():
         user_id = session["user_id"]
         recipes.add_image(recipe_id, image)
         return redirect("/images/" + str(recipe_id))
+    
+@app.route("/remove_image", methods=["POST"])
+def remove_image():
+    check_login()
+    recipe_id = request.form["recipe_id"]
+    recipe = recipes.get_recipe(recipe_id)
 
+    if not recipe:
+        abort(404)
+    if recipe["user_id"] != session["user_id"]:
+        abort(403)
+
+    for image_id in request.form.getlist("image_id"):
+        recipes.remove_image(recipe_id, image_id)
+    
+    return redirect("/images/" + str(recipe_id))
 
 @app.route("/logout")
 def logout():
