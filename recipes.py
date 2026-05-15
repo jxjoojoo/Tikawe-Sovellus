@@ -60,6 +60,17 @@ def update_recipe(recipe_id, recipe_name, items, description, section, time, cla
     for category, value in choices.items():
         db.execute(sql, [recipe_id, category, value])
 
+def add_comment(comment, recipe_id, user_id):
+    sql = """INSERT INTO Comments (recipe_id, user_id, comment_str)
+            VALUES (?, ?, ?)"""
+    db.execute(sql, [recipe_id, user_id, comment])
+
+def get_comments(recipe_id):
+    sql = """SELECT Comments.comment_str, Users.id AS user_id, Users.username
+            FROM Comments, Users WHERE Comments.recipe_id = ?
+            AND Comments.user_id = Users.id
+            ORDER BY Comments.id DESC"""
+    return db.query(sql, [recipe_id])
 
 def remove_recipe(recipe_id):
 
