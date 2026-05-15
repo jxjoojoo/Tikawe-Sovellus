@@ -1,11 +1,12 @@
-<!DOCTYPE html>
-{% if session.user_id == recipe.user_id %}
-<head>
-  <title>Reseptin muokkaus</title>
-</head>
-<body>
+{% extends "layout.html" %}
 
-<h1>Muokkaa reseptiä</h1>
+{% block title %}Respasovellus{% endblock %}
+
+{% block content %}
+<p>
+  <a href="/recipe/{{ recipe.id }}">Takaisin reseptiin</a>
+</p>
+<h2>Muokkaa reseptiä</h2>
 
 <form method="post" action="/edit_recipe/{{ recipe.id }}">
 
@@ -60,18 +61,4 @@
   </p>
   <input type="submit" name="save" value="Julkaise">
 </form>
-  </br>
-  <a href="/recipe/{{ recipe.id }}">Takaisin</a>
-  
-  {%else%}
-  <p>Et ole reseptin tekijä!</p>
-    <p>
-    <a href="/login">Kirjaudu </a>
-    </p>
-    <p>
-    <a href="/">Etusivulle</a>
-    </p>
-  {%endif%}
-
-</body>
-</html>
+{% endblock %}

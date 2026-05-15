@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>{% block title %}{% endblock %}</title>
+  
+</head>
+
+<body>
+  <h1>Respasovellus</h1>
+  {% if session.user_id %}
+  <p>
+    Olet kirjautunut sisään käyttäjänä <a href="/user/{{ session.user_id }}">{{ session.username }}</a>
+  </p>
+  <p>
+    <a href="/">Etusivulle</a>
+  </p>
+  <p>
+    <a href="/logout">Kirjaudu ulos</a>
+  </p>
+  <p>
+    <a href="/newrecipe">Lisää resepti</a>
+  {% else %}
+  <p>
+    <a href="/">Etusivulle</a>
+  </p>
+  <p>
+    <a href="/login">Kirjaudu sisään</a>
+  </p>
+  <p>
+    <a href="/register">Uusi käyttäjä</a>
+  </p>
+  {% endif %}
+  <p>
+    <a href="/find_recipe">Etsi reseptejä</a>
+  {% block content %}{% endblock %}
+</body>
+
+</html>

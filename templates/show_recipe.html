@@ -1,11 +1,8 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>{{ recipe.name }} </title>
-</head>
+{% block title %}{{ recipe.name }}{% endblock %}
 
-<body>
+{% block content %}
   <h1>{{ recipe.name }}</h1>
   {% if session.user_id == recipe.user_id %}
     <p>
@@ -41,7 +38,7 @@
           {{ minutes }}min
         </p>
    <p>Reseptin tekijä: <a href="/user/{{ recipe.user_id }}"> {{ username }}</a></p>
-   <h2>Kommentit:</h2>
+   <h2>Kommentit ({{ comments | count }}):</h2>
    <ul>
     {% for comment in comments %}
     <li>{{ comment.comment_str }} - <a href="/user/{{ comment.user_id }}">{{ comment.username }}</a></li>
@@ -55,8 +52,4 @@
      <input type="hidden" name="recipe_id" value="{{ recipe.id }}">
      <input type="submit" value="Lähetä kommentti"/>
    </form>
-   <br/>
-     <a href="/">Takaisin</a>
-  
-</body>
-</html>
+{% endblock %}

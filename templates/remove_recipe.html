@@ -1,5 +1,8 @@
-<!DOCTYPE html>
-{% if session.user_id == recipe.user_id %}
+{% extends "layout.html" %}
+
+{% block title %}Luo käyttäjä{% endblock %}
+
+{% block content %}
 <head>
   <title>Reseptin poisto</title>
 </head>
@@ -10,17 +13,4 @@
     <input type="submit" name="remove" value="Poista resepti">
     <input type="submit" name="dont" value="Takaisin">
   </form>
-  
-{%else%}
-<p>Et ole reseptin tekijä!</p>
-  <p>
-  <a href="/login">Kirjaudu </a>
-  </p>
-  <p>
-  <a href="/">Etusivulle </a>
-  </p>
-{%endif%}
-
-</body>
-
-</html>
+{% endblock %}

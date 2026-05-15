@@ -1,32 +1,9 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Respasovellus</title>
-</head>
+{% block title %}Respasovellus{% endblock %}
 
-<body>
-  <h1>Respasovellus</h1>
-  
-  {% if session.username %}
-  <p>
-    Olet kirjautunut sisään käyttäjänä {{ session.username }}
-  </p>
-  <p>
-    <a href="/logout">Kirjaudu ulos</a>
-  </p>
-  <p>
-    <a href="/newrecipe">Lisää resepti</a>
-  {% else %}
-  <p>
-    <a href="/login">Kirjaudu sisään</a>
-  </p>
-  <p>
-    <a href="/register">Uusi käyttäjä</a>
-  </p>
-  {% endif %}
-  <p>
-    <a href="find_recipe">Etsi reseptejä</a>
+{% block content %}
+
   <h2>Reseptit</h2>
   
     <ul>
@@ -34,9 +11,4 @@
       <li><a href="/recipe/{{ recipe.id }}">{{ recipe.name }}</li>
     {% endfor %}
     </ul>
-  
-</body>
-
-
-</html>
-  
+{% endblock %}

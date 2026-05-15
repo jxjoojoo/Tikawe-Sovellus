@@ -1,11 +1,9 @@
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Etsi resepti</title>
-</head>
+{% block title %}Etsi resepti{% endblock %}
 
-<body>
-  <h1>Etsi respa</h1>
+{% block content %}
+  <h2>Etsi respa</h2>
   
   <form action="/find_recipe" method="get">
     <p>
@@ -13,15 +11,11 @@
     </p>
     <input type="submit" value="Hae">
   </form>
-    <a href="/">Takaisin</a>
     <br>
-  
   {% for recipe in results %}
     <li>
       <a href="/recipe/{{ recipe.id }}">{{ recipe.name }}</a>
     </li>
   {% endfor %}
-  
-</body>
-</html>
+{% endblock %}
 

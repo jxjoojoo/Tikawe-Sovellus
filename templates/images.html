@@ -1,39 +1,37 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Reseptin kuvat</title>
-</head>
-<body>
-  <h1>Reseptin {{ recipe.name }} kuvat</h1>
+{% block title %}Respasovellus{% endblock %}
+
+{% block content %}
+<p>
+  <a href="/recipe/{{ recipe.id }}">Takaisin reseptiin</a>
+</p>
+<h2>Reseptin {{ recipe.name }} kuvat</h2>
+<p>
+  Reseptistä on {{ images | count }} kuva{% if images | count > 1 or images | count == 0 %}a{% endif %}.
+</p>
+
+<form action="/remove_image" method="POST">
+  {% for image in images %}
+    <input type="checkbox" name="image_id" value="{{ image.id }}">
+    <img src="/image/{{ image.id }}"/>
+  {% endfor %}
+  <input type="hidden" name="recipe_id" value="{{ recipe.id }}">
+  {% if image | count > 0 %}
   <p>
-    Reseptistä on {{ images | count }} kuva{% if images | count > 1 or images | count == 0 %}a{% endif %}.
+    <input type="submit" value="Poista valitut"/>
   </p>
-  
-  <form action="/remove_image" method="POST">
-    {% for image in images %}
-      <input type="checkbox" name="image_id" value="{{ image.id }}">
-      <img src="/image/{{ image.id }}"/>
-    {% endfor %}
-    <input type="hidden" name="recipe_id" value="{{ recipe.id }}">
-    <p>
-      <input type="submit" value="Poista valitut"/>
-    </p>
-  </form>
-  
-  <h2>Lisää uusi kuva</h2>
-    <form action="/add_image" method="post" enctype="multipart/form-data">
-    <p>
-      Kuva: <input type="file" name="image" accept=".jpg" />
-    </p>
-    <input type="hidden" name="recipe_id" value="{{ recipe.id }}">
-    <input type="submit" value="Lähetä" />
-  </form>
+  {% endif %}
+</form>
+
+<h3>Lisää uusi kuva</h3>
+  <form action="/add_image" method="post" enctype="multipart/form-data">
   <p>
-    <a href="/recipe/{{ recipe.id }}">Takaisin</a>
+    Kuva: <input type="file" name="image" accept=".jpg" />
   </p>
-  
-  </body>
-  </html>
+  <input type="hidden" name="recipe_id" value="{{ recipe.id }}">
+  <input type="submit" value="Lähetä" />
+</form>
+{% endblock %}
 
 

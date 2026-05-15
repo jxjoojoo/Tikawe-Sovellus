@@ -1,21 +1,18 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Käyttäjä {{ user.username }} </title>
-</head>
+{% block title %}Luo käyttäjä{% endblock %}
 
-<body>
-  <h1>Käyttäjä {{ user.username }} </h1>
+{% block content %}
+  <h2>Käyttäjä {{ user.username }} </h2>
   {% if session.user_id == user.id %}
     <p>
       Olet kirjautunut tälle käyttäjälle
     </p>
   {% endif %}
   <p>
-    Käyttäjä on tehnyt {{ recipes | count }} reseptiä.
+    Käyttäjä on julkaissut {% if recipes | count == 1 %}yhden reseptin{% else %}{{ recipes | count }} reseptiä{% endif %}.
   </p>
-  <h2>
+  <h3>
     <ul>
       {% for recipe in recipes %}
       <li>
@@ -23,8 +20,5 @@
       </li>
       {% endfor %}
     </ul>
-  </h2>
-     <a href="/">Takaisin</a>
-  
-</body/>
-</html>
+  </h3>
+{% endblock %}

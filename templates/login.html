@@ -1,9 +1,8 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Kirjaudu sisään</title>
-</head>
+{% block title %}Kirjaudu sisään{% endblock %}
+
+{% block content %}
   <h2>Kirjaudu sisään</h2>
   <form action="/login" method="post">
     <p>
@@ -21,6 +20,4 @@
       <p>{{ messages[0] }}</p>
     {% endif %}
   {% endwith %}
-
-</html>
-
+{% endblock %}

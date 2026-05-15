@@ -1,11 +1,9 @@
-<!DOCTYPE html>
-{% if session.user_id %}
-<head>
-  <title>Lisää resepti</title>
-</head>
-<body>
+{% extends "layout.html" %}
 
-<h1>Uusi resepti</h1>
+{% block title %}Uusi resepti{% endblock %}
+
+{% block content %}
+<h2>Uusi resepti</h2>
 
 <form action="/submit" method="post">
 
@@ -68,18 +66,9 @@
 
   <br><br>
   <input type="submit" value="Julkaise">
-
 </form>
-  </br>
-  <a href="/">Etusivulle</a>
-  
-  {%else%}
-  <p>Kirjaudu ensin sisään lisätäksesi reseptin</p>
-    <a href="/login">Kirjaudu </a>
-  {%endif%}
+{% endblock %}
 
-</body>
-</html>
 
 
 
