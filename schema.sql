@@ -4,13 +4,6 @@ CREATE TABLE Users (
     password_hash TEXT,
 );
 
-CREATE TABLE Comments (
-    id INTEGER PRIMARY KEY,
-    recipe_id INTEGER REFERENCES Recipes,
-    user_id INTEGER REFERENCES Users,
-    comment_str TEXT
-);
-
 CREATE TABLE Recipes (
     id INTEGER PRIMARY KEY,
     name TEXT UNIQUE,
@@ -33,6 +26,15 @@ CREATE TABLE Recipe_classes (
     value INTEGER
 );
 
+CREATE TABLE Comments (
+    id INTEGER PRIMARY KEY,
+    recipe_id INTEGER REFERENCES Recipes,
+    user_id INTEGER REFERENCES Users,
+    comment_str TEXT
+);
 
-    
-
+CREATE TABLE Images (
+    id INTEGER PRIMARY KEY,
+    recipe_id INTEGER REFERENCES Recipes,
+    image BLOB
+);

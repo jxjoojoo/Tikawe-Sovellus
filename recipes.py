@@ -1,6 +1,6 @@
 import db, sqlite3
 
-def add_recipe(ingredients, amounts, description, recipename, user_id, section, time):
+def add_recipe(ingredients, amounts, description, recipename, user_id, section, time, choices):
 
     items = ""
     if not ingredients:
@@ -22,8 +22,12 @@ def add_recipe(ingredients, amounts, description, recipename, user_id, section, 
     
     recipe_id = db.last_insert_id()
 
-    sql = "INSERT INTO Recipe_classes (recipe_id, title, time) VALUES (?,?,?)"
-    db.execute(sql, [recipe_id, section, time])
+    sql = "DELETE FROM Recipe_classes WHERE recipe_id = ?"
+    db.execute(sql, [recipe_id])
+
+    sql = "INSERT INTO Recipe_classes (recipe_id, title, value) VALUES (?, ?, ?)"
+    for category, value in choices.items():
+        db.execute(sql, [recipe_id, category, value])
 
 
 def get_recipes():
@@ -71,6 +75,19 @@ def get_comments(recipe_id):
             AND Comments.user_id = Users.id
             ORDER BY Comments.id DESC"""
     return db.query(sql, [recipe_id])
+
+def add_image(recipe_id, image):
+    sql = "INSERT INTO Images (recipe_id, image) VALUES (?, ?)"
+    db.execute(sql, [recipe_id, image])
+
+def get_images(recipe_id):
+    sql = "SELECT id FROM images WHERE recipe_id = ?"
+    return db.query(sql, [recipe_id])
+
+def get_image(image_id):
+    sql = "SELECT image FROM Images WHERE id = ?"
+    result = db.query(sql, [image_id])
+    return result[0][0] if result else None
 
 def remove_recipe(recipe_id):
 

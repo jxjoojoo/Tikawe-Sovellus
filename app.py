@@ -1,6 +1,6 @@
 import sqlite3
 from flask import Flask
-from flask import abort, redirect, render_template, flash, request, session
+from flask import abort, redirect, render_template, flash, request, session, make_response
 from werkzeug.security import generate_password_hash, check_password_hash
 import db
 import config
@@ -36,6 +36,7 @@ def show_recipe(recipe_id):
     classes = recipes.get_classes(recipe_id)
 
     comments = recipes.get_comments(recipe_id)
+    images = recipes.get_images(recipe_id)
 
     time = int(recipe["time"]) if recipe["time"] else 0
     hours = time // 60
@@ -43,8 +44,18 @@ def show_recipe(recipe_id):
 
     return render_template("show_recipe.html", recipe=recipe, itemslist=itemslist,
                             username=username, hours=hours,
-                            minutes=minutes, classes=classes, comments=comments)
-    
+                            minutes=minutes, classes=classes,
+                            comments=comments, images=images)
+
+@app.route("/image/<int:image_id>")
+def show_image(image_id):
+    image = recipes.get_image(image_id)
+    if not image:
+        abort(404)
+
+    response = make_response(bytes(image))
+    response.headers.set("Content-Type", "image/jpeg")
+    return response
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -66,6 +77,47 @@ def login():
     else:
         flash("Väärä runnus tai salasana")
         return redirect("/login")
+
+@app.route("/images/<int:recipe_id>")
+def edit_images(recipe_id):
+    check_login()
+    recipe = recipes.get_recipe(recipe_id)
+
+    if not recipe:
+        abort(404)
+    if recipe["user_id"] != session["user_id"]:
+        abort(403)
+
+    images = recipes.get_images(recipe_id)
+    
+    return render_template("images.html", recipe=recipe, images=images)
+
+@app.route("/add_image", methods=["POST"])
+def add_image():
+    check_login()
+    recipe_id = request.form["recipe_id"]
+    recipe = recipes.get_recipe(recipe_id)
+
+    if not recipe:
+        abort(404)
+    if recipe["user_id"] != session["user_id"]:
+        abort(403)
+
+    if request.method == "GET":
+        return render_template("add_image.html")
+
+    if request.method == "POST":
+        file = request.files["image"]
+        if not file.filename.endswith(".jpg"):
+            return "VIRHE: väärä tiedostomuoto"
+
+        image = file.read()
+        if len(image) > 100 * 1024:
+            return "VIRHE: liian suuri kuva"
+        user_id = session["user_id"]
+        recipes.add_image(recipe_id, image)
+        return redirect("/images/" + str(recipe_id))
+
 
 @app.route("/logout")
 def logout():
@@ -192,14 +244,12 @@ def submit_new_recipe():
     section = request.form.get("section")
     recipename = request.form.get("recipename", "")
     description = request.form.get("description", "")
-    classes = []
+    classes = recipes.get_all_classes()
 
-
-    for entry in request.form.getlist("classes"):
-        if entry:
-            parts = entry.split(":")
-            classes.append((parts[0], parts[1]))
-
+    choices = {}
+    for group in classes.keys():
+        if request.form.get(f"class_{group}"):
+            choices[group] = request.form.get(f"class_{group}")
 
     if not recipename or len(recipename) > 50:
         abort(403)
@@ -218,13 +268,13 @@ def submit_new_recipe():
     if recipename == "" or description == "":
         return "Resepti vaatii lisää tietoja"
     else:
-        recipes.add_recipe(ingredients, amounts, description, recipename, user_id, section, time)
+        recipes.add_recipe(ingredients, amounts, description, recipename, user_id, section, time, choices)
 
     return render_template("submit.html")
 
 @app.route("/edit_recipe/<int:recipe_id>", methods=["GET", "POST"])
 def edit_recipe(recipe_id):
-
+    check_login()
     recipe = recipes.get_recipe(recipe_id)
 
     if not recipe:

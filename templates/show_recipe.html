@@ -12,9 +12,13 @@
       <a href="/edit_recipe/{{ recipe.id }}">Muokkaa reseptiä</a>
       <br>
       <a href="/remove_recipe/{{ recipe.id }}">Poista resepti</a>
+      <br>
+      <a href="/images/{{ recipe.id }}">Kuvat</a>
     </p>
   {% endif %}
-  
+  {% for image in images %}
+  <img src="/image/{{ image.id }}"/>
+  {% endfor %}
     <p>
       Ainesosat:
     </p>
@@ -46,10 +50,12 @@
    
    <h3>Kommentoi</h3>
    <form action="/submit_comment" method="POST">
-     <input type="text" name="comment" maxlength="1000"><br/>
+     <textarea name="comment" rows="6" cols="40" maxlength="1000"></textarea>
+     <br/>
      <input type="hidden" name="recipe_id" value="{{ recipe.id }}">
-     <input type="submit" value="Lähetä kommentti"/><br/>
+     <input type="submit" value="Lähetä kommentti"/>
    </form>
+   <br/>
      <a href="/">Takaisin</a>
   
 </body>
