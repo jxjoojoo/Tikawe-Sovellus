@@ -119,10 +119,15 @@ def remove_recipe(recipe_id):
     db.execute(sql, [recipe_id])
 
 def find_recipes(query):
-    sql = """SELECT id, name, user_id, items, description
-            FROM Recipes WHERE name LIKE ? OR description LIKE ?
-            OR items LIKE ?
-            ORDER BY id DESC"""
+    sql = """SELECT R.id, R.name, R.user_id,
+            U.username, COUNT(C.id) comment_count
+            FROM Recipes R
+            JOIN Users U ON R.user_id = U.id
+            LEFT JOIN Comments C ON R.id = C.recipe_id
+            WHERE R.name LIKE ? OR R.description LIKE ?
+            OR U.username LIKE ?
+            GROUP BY R.id
+            ORDER BY R.id DESC"""
 
     return db.query(sql, ["%" + query + "%", "%" + query + "%", "%" + query + "%"])
 

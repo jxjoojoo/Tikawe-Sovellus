@@ -3,19 +3,25 @@
 {% block title %}Etsi resepti{% endblock %}
 
 {% block content %}
+<div class="search">
   <h2>Etsi respa</h2>
-  
   <form action="/find_recipe" method="get">
     <p>
-      Hakusana: <input type="text" name="query" value = "{{ query }}">
+      <input type="text" name="query" placeholder="Etsi reseptin nimen, ohjeiden, tai tekijän perusteella" value = "{{ query }}">
     </p>
     <input type="submit" value="Hae">
   </form>
     <br>
-  {% for recipe in results %}
-    <li>
-      <a href="/recipe/{{ recipe.id }}">{{ recipe.name }}</a>
-    </li>
-  {% endfor %}
+</div>
+
+{% for recipe in results %}
+<div class="recipe">
+  <a class="recipe-link" href="/recipe/{{ recipe.id }}">
+    <h3 class="recipetitle">{{ recipe.name }}</h3>
+  </a>
+    Julkaissut: <a href="/user/{{ recipe.user_id }}">{{ recipe.username }}</a> <br/>
+    ({{ recipe.comment_count }} kommentti{% if recipe.comment_count != 1 %}a{% endif %})
+</div>
+{% endfor %}
 {% endblock %}
 

@@ -24,6 +24,7 @@ a:hover {
   position: relative;
   border-width: 3px;
   border-style: solid;
+  border-radius: 8px;
   border-color: #30353f;
   background-color: grey;
   padding: 1em;
@@ -67,12 +68,6 @@ a.recipe-link {
   min-height: 1.5em;
 }
 
-.form {
-  background-color: lightslategrey;
-  padding: 1em;
-  margin: 0.5em 0;
-}
-
 .header {
   background-color: #3e4c68;
   text-align: center;
@@ -80,6 +75,7 @@ a.recipe-link {
 
 .navigation {
     background-color: #616e88;
+    border-radius: 8px;
     padding: 0.5em;
     margin: 0.5em 0;
     text-align: center;
@@ -96,3 +92,34 @@ a.recipe-link {
   border-style: solid;
   border-color: #30353f;
 }
+
+.search {
+  background-color: grey;
+  padding: 0.5em;
+  border-radius: 8px;
+  text-align: center;
+  border-width: 3px;
+  border-style: solid;
+  border-color: #30353f;
+}
+
+.search input[type="text"] {
+    width: 70%;
+    padding: 12px 8px;
+    font-size: 1.1em;
+    border-width: 3px;
+    border-style: solid;
+    border-color: #30353f;
+    outline: none;
+}
+
+.search input[type="submit"] {
+    font-size: 1em;
+    background-color: white;
+    color: grey;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+
