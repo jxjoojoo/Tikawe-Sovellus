@@ -20,7 +20,16 @@
 
   {% for i in range(count) %}
     <div>
-      <input type="text" name="ingredients{{ i }}" value="{{ ingredients[i] }}" maxlength="70">
+      <input type="text"
+             name="ingredients{{ i }}"
+             value="{{ ingredients[i].name }}"
+             maxlength="50"
+             placeholder="Ainesosa">
+      <input type="text"
+             name="amounts{{ i }}"
+             value="{{ ingredients[i].amount }}"
+             maxlength="10"
+             placeholder="Määrä">
       <button type="submit" name="remove" value="{{ i }}">Poista</button>
     </div>
   {% endfor %}

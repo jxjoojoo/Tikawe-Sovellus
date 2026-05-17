@@ -1,26 +1,20 @@
 import db, sqlite3
 
 def add_recipe(ingredients, amounts, description, recipename, user_id, section, time, choices):
-    items = ""
-    if not ingredients:
-        items = "Ei ainesosia"
-    else:
-        items_list = [
-            f"{i}: {a}" 
-            for i, a in zip(ingredients, amounts)
-            if i.strip() and a.strip()
-        ]
-        items = ",".join(items_list)
 
-    sql = """INSERT INTO Recipes (name, user_id, description, items, time) VALUES
-    (?, ?, ?, ?, ?)"""
+    sql = """INSERT INTO Recipes (name, user_id, description, time) VALUES
+    (?, ?, ?, ?)"""
     try:
-        db.execute(sql, [recipename, user_id, description, items, time])
+        db.execute(sql, [recipename, user_id, description, time])
     except sqlite3.IntegrityError:
         return "Tämä nimi jo käytössä reseptillä"
     
     recipe_id = db.last_insert_id()
-
+    
+    sql = "INSERT INTO Ingredients (recipe_id, name, amount) VALUES (?, ?, ?)"
+    for name, amount in zip(ingredients, amounts):
+        db.execute(sql, [recipe_id, name, amount])
+    
     sql = "DELETE FROM Recipe_classes WHERE recipe_id = ?"
     db.execute(sql, [recipe_id])
 
@@ -41,6 +35,10 @@ def get_all_recipes():
     
     return db.query(sql)
 
+def get_ingredients(recipe_id):
+    sql ="SELECT name, amount FROM Ingredients WHERE recipe_id = ?"
+    return db.query(sql, [recipe_id])
+
 def get_recipe(recipe_id):
     sql = """SELECT recipes.name,
             recipes.id,
@@ -55,14 +53,18 @@ def get_recipe(recipe_id):
     result = db.query(sql, [recipe_id])
     return result[0] if result else None
     
-def update_recipe(recipe_id, recipe_name, items, description, section, time, classes, choices):
+def update_recipe(recipe_id, recipename, ingredients, description, section, time, classes, choices):
     sql = """UPDATE Recipes SET name = ?,
             description = ?,
-            items = ?,
             time = ?
             WHERE id = ?"""
+    db.execute(sql, [recipename, description, time, recipe_id])
 
-    db.execute(sql, [recipe_name, description, items, time, recipe_id])
+    sql = "DELETE FROM Ingredients WHERE recipe_id = ?"
+    db.execute(sql, [recipe_id])
+    sql = "INSERT INTO Ingredients (recipe_id, name, amount) VALUES (?, ?, ?)"
+    for ing in ingredients:
+        db.execute(sql, [recipe_id, ing["name"], ing["amount"]])
 
     sql = "DELETE FROM Recipe_classes WHERE recipe_id = ?"
     db.execute(sql, [recipe_id])

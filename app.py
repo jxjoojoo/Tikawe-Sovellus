@@ -26,8 +26,7 @@ def show_recipe(recipe_id):
     if not recipe:
         abort(404)
 
-    items = recipe["items"]
-    itemslist = items.split(",")
+    ingredients = recipes.get_ingredients(recipe_id)
     user_id = recipe["user_id"]
 
     sql = "SELECT username FROM Users WHERE id = ?"
@@ -41,7 +40,7 @@ def show_recipe(recipe_id):
     hours = time // 60
     minutes = time % 60
 
-    return render_template("show_recipe.html", recipe=recipe, itemslist=itemslist,
+    return render_template("show_recipe.html", recipe=recipe, ingredients=ingredients,
                             username=username, hours=hours,
                             minutes=minutes, classes=classes,
                             comments=comments, images=images)
@@ -302,11 +301,11 @@ def edit_recipe(recipe_id):
         count = int(request.form.get("count", 1))
 
         ingredients = []
-
         for i in range(count):
             ing = request.form.get(f"ingredients{i}", "")
+            amt = request.form.get(f"amounts{i}", "")
             if ing.strip():
-                ingredients.append(ing)
+                ingredients.append({"name": ing, "amount": amt})
 
         hours = int(request.form.get("hours") or 0)
         minutes = int(request.form.get("minutes") or 0)
@@ -324,7 +323,7 @@ def edit_recipe(recipe_id):
 
 
         if "add" in request.form:
-            ingredients.append("")
+            ingredients.append({"name": "", "amount": ""})
 
         if "remove" in request.form:
             index = int(request.form.get("remove"))
@@ -332,8 +331,7 @@ def edit_recipe(recipe_id):
                 ingredients.pop(index)
 
         if "save" in request.form:
-            ingredients_str = ",".join(i for i in ingredients if i.strip())
-            update_recipe(recipe_id, recipename, ingredients_str, description, section, time, classes, choices)
+            update_recipe(recipe_id, recipename, ingredients, description, section, time, classes, choices)
             return redirect("/recipe/" + str(recipe_id))
         
         count = len(ingredients)
@@ -346,7 +344,8 @@ def edit_recipe(recipe_id):
 
 
 
-    ingredients = recipe["items"].split(",") if recipe["items"] else [""]
+    ingredients_data = recipes.get_ingredients(recipe_id)
+    ingredients = [{"name": row["name"], "amount": row["amount"]} for row in ingredients_data] or [{"name": "", "amount": ""}]
     description = recipe["description"]
     count = len(ingredients)
 
