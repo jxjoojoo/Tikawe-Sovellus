@@ -1,0 +1,9 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<meta http-equiv="refresh" content="2;url={{ prev }}">
+{% set messages = get_flashed_messages() %}
+{% if messages %}
+  <h2 class="message">{{ messages[-1] }}</h2>
+{% endif %}
+{% endblock %}

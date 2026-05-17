@@ -32,7 +32,7 @@
   </button>
 
   <p>Ohjeet:</p>
-  <textarea name="description" rows="15" cols="80" maxlength="1000">{{ description }}</textarea>
+  <textarea name="description" rows="15" cols="80" maxlength="1000" required>{{ description }}</textarea>
   {% for category, options in classes.items() %}
   <p>
     {{ category }}: <br>

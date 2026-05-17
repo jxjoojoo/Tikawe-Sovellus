@@ -3,8 +3,13 @@
 {% block title %}Respasovellus{% endblock %}
 
 {% block content %}
-
+{% set messages = get_flashed_messages() %}
+{% if messages %}
+  <meta http-equiv="refresh" content="2;url="/">
+  <h2 class="success">{{ messages[-1] }}</h2>
+{% endif %}
 <h2>Reseptit</h2>
+
 <p>{{ recipes_count }} julkaistua reseptiä</p>
 
 {% for recipe in all_recipes %}

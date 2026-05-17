@@ -18,4 +18,12 @@ body {
   margin: 0.5em 0;
 }
 
+.success {
+  color: forestgreen;
+}
+
+.error {
+  color: firebrick;
+}
+
 

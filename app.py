@@ -64,6 +64,7 @@ def login():
         username = request.form["username"]
         password = request.form["password"]
         if not username or not password:
+            flash("Kenttiä tyhjänä")
             return redirect("/login")
     
     user_id = users.check_login_id(username, password)
@@ -71,6 +72,7 @@ def login():
     if user_id:
         session["username"] = username
         session["user_id"] = user_id
+        flash("Kirjautuminen onnistui")
         return redirect("/")
     else:
         flash("Väärä runnus tai salasana")
@@ -137,8 +139,8 @@ def logout():
     if "user_id" in session:
         del session["username"]
         del session["user_id"]
-    return redirect("/")
-
+    flash("Olet nyt kirjautunut ulos")
+    return redirect("/message")
 
 @app.route("/register", methods=["POST", "GET"])
 def register():
@@ -164,7 +166,14 @@ def create_new_account():
         flash("VIRHE: Tunnus on jo varattu")
         return redirect("/register")
 
-    return render_template("user_created.html", username=username)
+    flash("Tunnus luotu!")
+    return redirect("/message")
+
+@app.route("/message")
+def message():
+    #redirect("/message?prev={edellinen sivu}") kun ohjaus muualle
+    prev = request.args.get("prev", "/")
+    return render_template("message.html", prev=prev)
 
 @app.route("/newrecipe", methods=["GET", "POST"])
 def newrecipe():
@@ -217,18 +226,6 @@ def newrecipe():
         
     )
 
-@app.route("/submit_comment", methods=["POST"])
-def newcomment():
-    check_login()
-    comment = request.form.get("comment", "")
-    recipe_id = request.form.get("recipe_id", "")
-    recipe = recipes.get_recipe(recipe_id)
-    if not recipe:
-        abort(403)
-    user_id = session["user_id"]
-    recipes.add_comment(comment, recipe_id, user_id)
-    return redirect(f"/recipe/{recipe_id}")
-
 @app.route("/submit", methods=["POST"])
 def submit_new_recipe():
     check_login()
@@ -248,10 +245,10 @@ def submit_new_recipe():
     
     hours = int(request.form.get("hours") or 0)
     if hours < 0:
-        return redirect("/new_recipe")
+        abort(403)
     minutes = int(request.form.get("minutes") or 0)
     if minutes < 0:
-        return redirect("/new_recipe")
+        abort(403)
     
     time = hours * 60 + minutes
     section = request.form.get("section")
@@ -279,11 +276,25 @@ def submit_new_recipe():
     user_id = session["user_id"]
 
     if recipename == "" or description == "":
-        return "Resepti vaatii lisää tietoja"
+        flash("Puuttuvia tietoja!")
+        return redirect("/newrecipe")
     else:
         recipes.add_recipe(ingredients, amounts, description, recipename, user_id, section, time, choices)
 
-    return render_template("submit.html")
+    flash("Resepti lisätty!")
+    return redirect("/message")
+
+@app.route("/submit_comment", methods=["POST"])
+def newcomment():
+    check_login()
+    comment = request.form.get("comment", "")
+    recipe_id = request.form.get("recipe_id", "")
+    recipe = recipes.get_recipe(recipe_id)
+    if not recipe:
+        abort(404)
+    user_id = session["user_id"]
+    recipes.add_comment(comment, recipe_id, user_id)
+    return redirect(f"/recipe/{recipe_id}")
 
 @app.route("/edit_recipe/<int:recipe_id>", methods=["GET", "POST"])
 def edit_recipe(recipe_id):
@@ -380,10 +391,13 @@ def update_recipe(recipe_id, recipename, ingredients, description, section, time
         abort(404)
     if recipe["user_id"] != session["user_id"]:
         abort(403)
-    if not recipename or len(recipename) > 50:
+    if not recipename:
         abort(403)
-    if not description or len(description) > 1000:
-        print("No description")
+    if len(recipename) > 50:
+        abort(403)
+    if not description:
+        abort(403)
+    if len(description) > 1000:
         abort(403)
     
     recipes.update_recipe(recipe_id, recipename, ingredients, description, section, time, classes, choices)
@@ -402,10 +416,10 @@ def remove_recipe(recipe_id):
         return render_template("remove_recipe.html", recipe=recipe)
     
     if request.method == "POST":
-
         if "remove" in request.form:
             recipes.remove_recipe(recipe_id)
-            return redirect("/")
+            flash("Resepti poistettu!")
+            return redirect("/message")
 
         if "dont" in request.form:
             return redirect("/recipe/" + str(recipe_id))
@@ -433,5 +447,4 @@ def show_user(user_id):
 @app.route("/leaderboard")
 def leaderboard():
     leaderboard = users.get_leaderboard()
-    
     return render_template("leaderboard.html", leaderboard=leaderboard)

@@ -106,6 +106,15 @@ def remove_recipe(recipe_id):
     sql = "DELETE FROM Recipe_classes WHERE recipe_id = ?"
     db.execute(sql, [recipe_id])
 
+    sql = "DELETE FROM Images WHERE recipe_id = ?"
+    db.execute(sql, [recipe_id])
+
+    sql = "DELETE FROM Comments WHERE recipe_id = ?"
+    db.execute(sql, [recipe_id])
+
+    sql = "DELETE FROM Ingredients WHERE recipe_id = ?"
+    db.execute(sql, [recipe_id])
+
     sql = "DELETE FROM Recipes WHERE id = ?"
     db.execute(sql, [recipe_id])
 
@@ -132,8 +141,3 @@ def get_all_classes():
         classes[title].append(value)
 
     return classes
-
-
-
-
-
