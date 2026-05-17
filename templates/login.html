@@ -3,6 +3,7 @@
 {% block title %}Kirjaudu sisään{% endblock %}
 
 {% block content %}
+<div class="content">
   <h2>Kirjaudu sisään</h2>
   <form action="/login" method="post">
     <p>
@@ -15,8 +16,13 @@
     </p>
     <input type="submit" value="Kirjaudu" />
   </form>
-{% set messages = get_flashed_messages() %}
-{% if messages %}
-  <h2 class="error">{{ messages[0] }}</h2>
-{% endif %}
-{% endblock %}
+  {% set messages = get_flashed_messages() %}
+  <p class="error">
+    {% if messages %}
+    {{ messages[0] }}
+    {% endif %}
+  </p>
+  {% endblock %}
+</div>
+
+

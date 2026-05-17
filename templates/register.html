@@ -3,25 +3,29 @@
 {% block title %}Luo käyttäjä{% endblock %}
 
 {% block content %}
-<h2>Luo uusi käyttäjä</h2>
-<form class="form" action="/create" method="post">
-  <p>
-    Käyttäjänimi: <br />
-    <input type="text" name="username" />
+<div class="content">
+  <h2>Luo uusi käyttäjä</h2>
+  <form action="/create" method="post">
+    <p>
+      Käyttäjänimi: <br />
+      <input type="text" name="username" />
+    </p>
+    <p>
+      Salasana: <br />
+      <input type="password" name="password1" />
+    </p>
+    <p>
+      Salasana uudestaan: <br />
+      <input type="password" name="password2" />
+    </p>
+    <input type="submit" value="Luo käyttäjä" />
+  </form>
+  {% set messages = get_flashed_messages() %}
+  <p class="error">
+    {% if messages %}
+    {{ messages[0] }}
+    {% endif %}
   </p>
-  <p>
-    Salasana: <br />
-    <input type="password" name="password1" />
-  </p>
-  <p>
-    Salasana uudestaan: <br />
-    <input type="password" name="password2" />
-  </p>
-  <input type="submit" value="Luo käyttäjä" />
-</form>
-{% set messages = get_flashed_messages() %}
-{% if messages %}
-  <h2 class="error">{{ messages[0] }}</h2>
-{% endif %}
+</div>
 {% endblock %}
     

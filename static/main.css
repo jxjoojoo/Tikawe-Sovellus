@@ -22,7 +22,7 @@ a:hover {
 
 .recipe {
   position: relative;
-  border-width: 2px;
+  border-width: 3px;
   border-style: solid;
   border-color: #30353f;
   background-color: grey;
@@ -59,10 +59,12 @@ a.recipe-link {
 
 .success {
   color: forestgreen;
+  position: fixed;
 }
 
 .error {
   color: firebrick;
+  min-height: 1.5em;
 }
 
 .form {
@@ -81,4 +83,16 @@ a.recipe-link {
     padding: 0.5em;
     margin: 0.5em 0;
     text-align: center;
+}
+
+.content {
+  background-color: grey;
+  padding: 2em;
+  margin: 50px auto;
+  max-width: 400px;
+  border-radius: 8px;
+  text-align: center;
+  border-width: 3px;
+  border-style: solid;
+  border-color: #30353f;
 }
