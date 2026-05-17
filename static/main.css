@@ -1,0 +1,12 @@
+body {
+  margin: auto;
+  max-width: 50em;
+  font-family: sans-serif;
+  background-color: darkgrey;
+}
+
+.recipe {
+  background-color: grey;
+  padding: 1em;
+  margin: 0.5em 0;
+}

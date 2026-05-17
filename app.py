@@ -15,9 +15,9 @@ def check_login():
 
 @app.route("/", methods=["GET","POST"])
 def index():
-    all_recipes = recipes.get_recipes()
-
-    return render_template("index.html", all_recipes=all_recipes)
+    all_recipes = recipes.get_all_recipes()
+    recipes_count = len(all_recipes)
+    return render_template("index.html", all_recipes=all_recipes, recipes_count=recipes_count)
 
 @app.route("/recipe/<int:recipe_id>")
 def show_recipe(recipe_id):

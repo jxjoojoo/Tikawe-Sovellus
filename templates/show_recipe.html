@@ -3,7 +3,7 @@
 {% block title %}{{ recipe.name }}{% endblock %}
 
 {% block content %}
-  <h1>{{ recipe.name }}</h1>
+  <h2>{{ recipe.name }}</h2>
   {% if session.user_id == recipe.user_id %}
     <p>
       <a href="/edit_recipe/{{ recipe.id }}">Muokkaa reseptiä</a>
@@ -24,13 +24,16 @@
         <li>{{ item }}</li>
       {% endfor %}
     </ul>
-    
-   <p>{{ recipe.description }}</p>
-   
+   {% if recipe.description %}
+   <p>Ohjeet:</br>
+   {{ recipe.description }}</p>
+   {% endif %}
+   {% if classes %}
    <p>Luokittelu:<br>
       {% for title, value in classes %}
-        {{ title }}: {{ value }}<br>
+        {{ title }}: {{ value }}</br>
       {% endfor %}
+   {% endif %}
    </p>
       Aika:
         <p>
@@ -38,7 +41,7 @@
           {{ minutes }}min
         </p>
    <p>Reseptin tekijä: <a href="/user/{{ recipe.user_id }}"> {{ username }}</a></p>
-   <h2>Kommentit ({{ comments | count }}):</h2>
+   <h3>Kommentit ({{ comments | count }}):</h3>
    <ul>
     {% for comment in comments %}
     <li>{{ comment.comment_str }} - <a href="/user/{{ comment.user_id }}">{{ comment.username }}</a></li>

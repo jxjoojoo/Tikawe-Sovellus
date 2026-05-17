@@ -29,8 +29,16 @@ def add_recipe(ingredients, amounts, description, recipename, user_id, section, 
         db.execute(sql, [recipe_id, category, value])
 
 
-def get_recipes():
-    sql = "SELECT id, name, description, items FROM Recipes ORDER BY id DESC;"
+def get_all_recipes():
+    sql = """SELECT Recipes.id, Recipes.name, Recipes.description,
+            Recipes.items, Recipes.user_id, Users.username,
+            COUNT(Recipes.id) total_recipes, COUNT(Comments.id) comment_count
+            FROM Recipes JOIN Users ON Recipes.user_id = Users.id
+            LEFT JOIN Comments ON Recipes.id = Comments.recipe_id
+            WHERE Recipes.user_id = Users.id
+            GROUP BY Recipes.id
+            ORDER BY Recipes.id DESC"""
+    
     return db.query(sql)
 
 def get_recipe(recipe_id):
