@@ -30,6 +30,10 @@ a:hover {
   margin: 0.5em 0;
 }
 
+.recipetitle {
+  margin: 0.5em 0;
+}
+
 a.recipe-link {
     text-decoration: none;
     color: inherit;
@@ -77,12 +81,4 @@ a.recipe-link {
     padding: 0.5em;
     margin: 0.5em 0;
     text-align: center;
-}
-
-.content {
-  
-}
-
-.recipetitle {
-  margin: 0.5em 0;
 }

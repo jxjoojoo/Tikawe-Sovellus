@@ -8,17 +8,16 @@ def get_user(user_id):
     return result[0] if result else None
 
 def get_recipes(user_id):
-    sql = """SELECT id, name
-            FROM Recipes
-            WHERE user_id = ?
-            ORDER BY id DESC"""
+    sql = """SELECT Recipes.id, Recipes.name, COUNT(Comments.id) comment_count
+            FROM Recipes LEFT JOIN Comments ON Recipes.id = Comments.recipe_id
+            WHERE Recipes.user_id = ? GROUP BY Recipes.id
+            ORDER BY Recipes.id DESC"""
     return db.query(sql, [user_id])
 
 def create_user(name, password):
     password_hash = generate_password_hash(password)
     sql = "INSERT INTO Users (username, password_hash) VALUES (?,?)"
     db.execute(sql, [name, password_hash])
-
 
 def check_login_id(name, password):
     sql = "SELECT id, password_hash FROM Users WHERE username = ?"

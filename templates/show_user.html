@@ -3,22 +3,24 @@
 {% block title %}Luo käyttäjä{% endblock %}
 
 {% block content %}
-  <h2>Käyttäjä {{ user.username }} </h2>
-  {% if session.user_id == user.id %}
+  <div class="header">
+    <h2>Käyttäjä {{ user.username }} </h2>
     <p>
-      Olet kirjautunut tälle käyttäjälle
+      on julkaissut {% if recipes | count == 1 %}yhden reseptin{% else %}{{ recipes | count }} reseptiä{% endif %}.
     </p>
-  {% endif %}
+  </div>
+  {% if session.user_id == user.id %}
   <p>
-    Käyttäjä on julkaissut {% if recipes | count == 1 %}yhden reseptin{% else %}{{ recipes | count }} reseptiä{% endif %}.
+    Olet kirjautunut tälle käyttäjälle
   </p>
-  <h3>
-    <ul>
-      {% for recipe in recipes %}
-      <li>
-        <a href="/recipe/{{ recipe.id }}">{{ recipe.name }}</a>
-      </li>
-      {% endfor %}
-    </ul>
-  </h3>
+  {% endif %}
+  {% for recipe in recipes %}
+  <div class="recipe">
+    <a class="recipe-link" href="/recipe/{{ recipe.id }}">
+      <h3 class="recipetitle">{{ recipe.name }}</h3>
+      ({{ recipe.comment_count }} kommentti{% if recipe.comment_count != 1 %}a{% endif %})
+    </a>
+  </div>
+  {% endfor %}
+  
 {% endblock %}
