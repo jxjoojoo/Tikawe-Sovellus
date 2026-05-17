@@ -35,5 +35,10 @@ def check_login_id(name, password):
     else:
         return None
 
-        
-    
+def get_leaderboard():
+    sql = """SELECT Users.username, Users.id, COUNT(Recipes.id) recipe_count FROM Users
+            LEFT JOIN Recipes ON Recipes.user_id = Users.id
+            GROUP BY Users.id
+            ORDER BY recipe_count DESC
+            LIMIT 5"""
+    return db.query(sql)

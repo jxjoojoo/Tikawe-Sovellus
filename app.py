@@ -429,3 +429,9 @@ def show_user(user_id):
 
     recipes = users.get_recipes(user_id)
     return render_template("show_user.html", user=user, recipes=recipes)
+
+@app.route("/leaderboard")
+def leaderboard():
+    leaderboard = users.get_leaderboard()
+    
+    return render_template("leaderboard.html", leaderboard=leaderboard)

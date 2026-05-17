@@ -33,12 +33,11 @@
       <button type="submit" name="remove" value="{{ i }}">Poista</button>
     </div>
   {% endfor %}
-
   <button type="submit" name="add" value="1">Lisää ainesosa</button>
 
   <p>Ohjeet:</p>
     <textarea name="description" rows="15" cols="80" maxlength="1000">{{ description }}</textarea>
-  
+
   {% for category, options in classes.items() %}
   <p>
     {{ category }}: <br>
@@ -66,7 +65,6 @@
            placeholder="Minuutit"
            min="0"
            max="59">
-  
   </p>
   <input type="submit" name="save" value="Julkaise">
 </form>

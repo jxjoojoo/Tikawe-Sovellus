@@ -10,3 +10,12 @@ body {
   padding: 1em;
   margin: 0.5em 0;
 }
+
+.user {
+  border: 2px solid black;
+  background-color: grey;
+  padding: 0.5em;
+  margin: 0.5em 0;
+}
+
+
