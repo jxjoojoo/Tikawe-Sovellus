@@ -2,13 +2,48 @@ body {
   margin: auto;
   max-width: 50em;
   font-family: sans-serif;
-  background-color: darkgrey;
+  background-color: #3e4c68;
+}
+
+.navigation a {
+  color: black;
+  text-decoration: none;
+}
+
+a {
+    color: #004499;
+    text-decoration: none;
+}
+
+a:hover {
+  color: #004499;
+  text-decoration: underline;
 }
 
 .recipe {
+  position: relative;
+  border-width: 2px;
+  border-style: solid;
+  border-color: #30353f;
   background-color: grey;
   padding: 1em;
   margin: 0.5em 0;
+}
+
+a.recipe-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.recipe-link::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+}
+
+.recipe a[href^="/user/"] {
+  position: relative;
+  z-index: 1;
 }
 
 .user {
@@ -26,4 +61,28 @@ body {
   color: firebrick;
 }
 
+.form {
+  background-color: lightslategrey;
+  padding: 1em;
+  margin: 0.5em 0;
+}
 
+.header {
+  background-color: #3e4c68;
+  text-align: center;
+}
+
+.navigation {
+    background-color: #616e88;
+    padding: 0.5em;
+    margin: 0.5em 0;
+    text-align: center;
+}
+
+.content {
+  
+}
+
+.recipetitle {
+  margin: 0.5em 0;
+}

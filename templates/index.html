@@ -8,16 +8,19 @@
   <meta http-equiv="refresh" content="2;url="/">
   <h2 class="success">{{ messages[-1] }}</h2>
 {% endif %}
-<h2>Reseptit</h2>
-
-<p>{{ recipes_count }} julkaistua reseptiä</p>
+<div class="header">
+  <h2>Reseptit</h2>
+  <p>{{ recipes_count }} julkaistua reseptiä</p>
+</div>
 
 {% for recipe in all_recipes %}
 <div class="recipe">
-  <a href="/recipe/{{ recipe.id }}">{{ recipe.name }}</a> <br />
-  Julkaissut: <a href="/user/{{ recipe.user_id }}">{{ recipe.username }}</a> <br/>
-  ({{ recipe.comment_count }} kommentti{% if recipe.comment_count != 1 %}a{% endif %}) <br />
-</div>
+  <a class="recipe-link" href="/recipe/{{ recipe.id }}">
+    <h3 class="recipetitle">{{ recipe.name }}</h3>
+  </a>
+    Julkaissut: <a href="/user/{{ recipe.user_id }}">{{ recipe.username }}</a> <br/>
+    ({{ recipe.comment_count }} kommentti{% if recipe.comment_count != 1 %}a{% endif %})
+  </div>
 {% endfor %}
 
 {% endblock %}
