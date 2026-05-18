@@ -7,7 +7,7 @@
   <h2 class="contentheader">Uusi resepti</h2>
   <form name="submitrecipe" method="post">
     <h3>Reseptin nimi:</h3>
-    <input class="namebar" type="text" name="recipename" value="{{ recipename }}" maxlength="50" required>
+    <input class="namebar" type="text" name="recipename" value="{{ recipename }}" maxlength="33" required>
     <h3>Ainesosat:</h3>
     {% for i in range(count) %}
       <input type="text"

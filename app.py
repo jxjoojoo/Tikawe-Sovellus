@@ -282,9 +282,11 @@ def submit_new_recipe():
         if request.form.get(f"class_{group}"):
             choices[group] = request.form.get(f"class_{group}")
 
-    if not recipename or len(recipename) > 50:
+    if not recipename or len(recipename) > 35:
         abort(403)
-    if not description or len(description) > 1000:
+    if len(description) > 1000:
+        abort(403)
+    if not description:
         flash("Kirjoita reseptille ohje!")
         return render_template(
         "newrecipe.html",
@@ -459,7 +461,7 @@ def update_recipe(recipe_id, recipename, ingredients, description, section, time
         abort(403)
     if not recipename:
         abort(403)
-    if len(recipename) > 50:
+    if len(recipename) > 35:
         abort(403)
     if not description:
         abort(403)

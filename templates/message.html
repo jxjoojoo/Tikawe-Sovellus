@@ -1,6 +1,9 @@
 {% extends "layout.html" %}
 
+{% block title %}{% set messages = get_flashed_messages() %}{% if messages %}{{ messages[-1] }}{% endif %}{% endblock %}
+
 {% block content %}
+
 <div class="content">
   <meta http-equiv="refresh" content="2;url={{ prev }}">
   {% set messages = get_flashed_messages() %}
