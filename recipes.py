@@ -44,7 +44,6 @@ def get_recipe(recipe_id):
     sql = """SELECT recipes.name,
             recipes.id,
             recipes.description,
-            recipes.items,
             recipes.time,
             users.username,
             users.id user_id
