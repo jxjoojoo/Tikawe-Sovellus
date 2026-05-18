@@ -3,6 +3,7 @@
     --base: #30353F;
     --font: #F1F1F1;
     --link: #1D60D1;
+    --recp: #545964;
 }
 
 body {
@@ -34,6 +35,18 @@ a {
 a:hover {
   color: var(--link);
   text-decoration: underline;
+}
+
+.image {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.image img {
+    width: 100%;
+    height: 300px;
+    border-radius: 8px;
 }
 
 .recipe {
@@ -99,6 +112,17 @@ a.recipe-link {
   text-align: center;
 }
 
+.contentheader {
+  background-color: var(--base);
+  padding: 1em;
+  text-align: center;
+}
+
+.bottomnav {
+    background-color: var(--base);
+    text-align: center;
+}
+
 .search {
   background-color: var(--base);
   padding: 0.5em;
@@ -108,22 +132,20 @@ a.recipe-link {
   border-style: solid;
 }
 
-.search input[type="text"] {
-    width: 70%;
-    padding: 12px 8px;
-    font-size: 1.1em;
-    border-width: 3px;
-    border-style: solid;
-    border-color: var(--back);
-    outline: none;
+.commentfield {
+  background-color: var(--font);
+  border-width: 3px;
+  border-style: solid;
+  border-radius: 8px;
+  border-color: var(--back);
 }
 
-.search input[type="submit"] {
+.button {
     font-size: 1em;
     background-color: white;
-    color: grey;
+    color: var(--back);
     border: none;
-    border-radius: 2px;
+    border-radius: 4px;
     cursor: pointer;
 }
 
