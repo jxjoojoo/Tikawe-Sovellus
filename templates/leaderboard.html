@@ -3,9 +3,9 @@
 {% block title %}Kirjaudu sisään{% endblock %}
 
 {% block content %}
-<h2>Eniten julkaistuja reseptejä</h2>
+<h2 class="header">Eniten julkaistuja reseptejä</h2>
 {% for user in leaderboard %}
-<div class="user">
+<div class="content">
   {% if loop.index == 1 %}👑{% endif %}
   {% if loop.index == 2 %}🥈{% endif %}
   {% if loop.index == 3 %}🥉{% endif %}
