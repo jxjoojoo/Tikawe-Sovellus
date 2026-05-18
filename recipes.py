@@ -7,7 +7,7 @@ def add_recipe(ingredients, amounts, description, recipename, user_id, section, 
     try:
         db.execute(sql, [recipename, user_id, description, time])
     except sqlite3.IntegrityError:
-        return "Tämä nimi jo käytössä reseptillä"
+        return "name already_in_use"
     
     recipe_id = db.last_insert_id()
     
@@ -21,7 +21,8 @@ def add_recipe(ingredients, amounts, description, recipename, user_id, section, 
     sql = "INSERT INTO Recipe_classes (recipe_id, title, value) VALUES (?, ?, ?)"
     for category, value in choices.items():
         db.execute(sql, [recipe_id, category, value])
-
+    
+    return recipe_id
 
 def get_all_recipes():
     sql = """SELECT Recipes.id, Recipes.name, Recipes.description,

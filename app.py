@@ -205,6 +205,22 @@ def newrecipe():
     for c in classes:
         choices[c] = "(valitse)"
 
+    if "submitrecipe" in request.form:
+        if not description:
+            flash("Kirjoita reseptille ohje!")
+            return render_template(
+                "newrecipe.html",
+                count=count,
+                ingredients=ingredients,
+                amounts=amounts,
+                recipename=recipename,
+                description=description,
+                hours=hours,
+                minutes=minutes,
+                section=section,
+                classes=classes,
+                choices=choices)
+
     if request.method == "POST":
         choices = {}
         for category in classes:
@@ -226,7 +242,7 @@ def newrecipe():
         
     )
 
-@app.route("/submit", methods=["POST"])
+@app.route("/submit", methods=["GET","POST"])
 def submit_new_recipe():
     check_login()
 
@@ -264,7 +280,19 @@ def submit_new_recipe():
     if not recipename or len(recipename) > 50:
         abort(403)
     if not description or len(description) > 1000:
-        abort(403)
+        flash("Kirjoita reseptille ohje!")
+        return render_template(
+        "newrecipe.html",
+        count=count,
+        ingredients=ingredients,
+        amounts=amounts,
+        recipename=recipename,
+        description=description,
+        hours=hours,
+        minutes=minutes,
+        section=section,
+        classes=classes,
+        choices=choices)
 
     for i in ingredients:
         if len(i) > 50:
@@ -279,10 +307,23 @@ def submit_new_recipe():
         flash("Puuttuvia tietoja!")
         return redirect("/newrecipe")
     else:
-        recipes.add_recipe(ingredients, amounts, description, recipename, user_id, section, time, choices)
-
-    flash("Resepti lisätty!")
-    return redirect("/message")
+        recipe_id = recipes.add_recipe(ingredients, amounts, description, recipename, user_id, section, time, choices)
+        if recipe_id == "name already_in_use":
+            flash("nimi on jo käytössä, valitse toinen nimi")
+            return render_template(
+            "newrecipe.html",
+            count=count,
+            ingredients=ingredients,
+            amounts=amounts,
+            recipename=recipename,
+            description=description,
+            hours=hours,
+            minutes=minutes,
+            section=section,
+            classes=classes,
+            choices=choices)
+        flash("Resepti lisätty!")
+        return redirect(F"/message?prev=/recipe/{recipe_id}")
 
 @app.route("/submit_comment", methods=["POST"])
 def newcomment():
@@ -441,7 +482,7 @@ def show_user(user_id):
     if not user:
         abort(404)
     recipes = users.get_recipes(user_id)
-    
+
     return render_template("show_user.html", user=user, recipes=recipes)
 
 @app.route("/leaderboard")

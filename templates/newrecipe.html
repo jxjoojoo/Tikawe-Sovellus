@@ -3,69 +3,80 @@
 {% block title %}Uusi resepti{% endblock %}
 
 {% block content %}
-<h2>Uusi resepti</h2>
+<div class="recipe">
+  <h2>Uusi resepti</h2>
+  <form name="submitrecipe" method="post">
+    <h3>Reseptin nimi:</h3>
+    <input class="namebar" type="text" name="recipename" value="{{ recipename }}" maxlength="50" required>
+    <h3>Ainesosat:</h3>
+    {% for i in range(count) %}
+      <input type="text"
+             class="ingbar"
+             name="ingredients{{ i }}"
+             value="{{ ingredients[i] }}"
+             maxlength="50"
+             placeholder="Ainesosa">
 
-<form action="/submit" method="post">
+      <input type="text"
+             class="amobar"
+             name="amounts{{ i }}"
+             value="{{ amounts[i] }}"
+             maxlength="20"
+             placeholder="Määrä">
+      <br>
+    {% endfor %}
 
-  <p>Reseptin nimi:</p>
-    <input type="text" name="recipename" value="{{ recipename }}" maxlength="50" required><br><br>
+    <input type="hidden" name="count" value="{{ count }}">
+    <button type="submit" class="ingbutton" formaction="/newrecipe" name="add">Lisää ainesosa
+    </button>
 
-  <p>Ainesosat:</p>
-  {% for i in range(count) %}
-    <input type="text"
-           name="ingredients{{ i }}"
-           value="{{ ingredients[i] }}"
-           maxlength="50"
-           placeholder="Ainesosa">
-
-    <input type="text"
-           name="amounts{{ i }}"
-           value="{{ amounts[i] }}"
-           maxlength="20"
-           placeholder="Määrä">
-    <br>
-  {% endfor %}
-
-  <input type="hidden" name="count" value="{{ count }}">
-
-  <button type="submit" formaction="/newrecipe" name="add">Lisää ainesosa
-  </button>
-
-  <p>Ohjeet:</p>
-  <textarea name="description" rows="15" cols="80" maxlength="1000" required>{{ description }}</textarea>
-  {% for category, options in classes.items() %}
-  <p>
-    {{ category }}: <br>
-    <select name="class_{{ category }}">
-      <option value="">(valitse)</option>
-      {% for option in options %}
-        <option value="{{ option }}"
-          {% if choices[category] == option %}selected{% endif %}>
-          {{ option }}
-        </option>
-      {% endfor %}
-    </select>
-  </p>
-  {% endfor %}
-  <p>
-    Aika:
-    <input type="number"
-           name ="hours"
-           value="{{ hours }}"
-           placeholder="Tunnit"
-           min="0"
-           max="48">
-    <input type="number"
-           name="minutes"
-           value="{{ minutes }}"
-           placeholder="Minuutit"
-           min="0"
-           max="59">
-  </p>
-  <input type="submit" value="Julkaise">
-</form>
+    <h3>Ohjeet:</h3>
+    <textarea name="description" class="commentfield" rows="15" cols="80" maxlength="1000">{{ description }}</textarea>
+    {% for category, options in classes.items() %}
+    <p>
+      <h3>{{ category }}:</h3>
+      <select name="class_{{ category }}">
+        <option value="">(valitse)</option>
+        {% for option in options %}
+          <option value="{{ option }}"
+            {% if choices[category] == option %}selected{% endif %}>
+            {{ option }}
+          </option>
+        {% endfor %}
+      </select>
+     </p>
+    {% endfor %}
+    <p>
+      <h3>Aika:</h3>
+      <input type="number"
+             class="timebar"
+             name ="hours"
+             value="{{ hours }}"
+             placeholder="Tunnit"
+             min="0"
+             max="48">
+      <input type="number"
+             class="timebar"
+             name="minutes"
+             value="{{ minutes }}"
+             placeholder="Minuutit"
+             min="0"
+             max="59">
+    </p>
+    <input type="submit" class="bigbutton" name="submitrecipe" formaction="/submit" value="Julkaise">
+    {% set messages = get_flashed_messages() %}
+    {% if messages %}
+      {% if "lisätty" in messages %}
+        <meta http-equiv="refresh" content="2;url="/">
+      {% endif %}
+        <input type="checkbox" id="closeerror">
+        <label class="remove" for="closeerror">
+          <h2 class="error">{{ messages[-1] }}</h2>
+        </label>
+     {% endif %}
+  </form>
+</div>
 {% endblock %}
-
 
 
 

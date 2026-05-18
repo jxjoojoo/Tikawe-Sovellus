@@ -1,9 +1,10 @@
 :root {
-    --back: #191A1B;
-    --base: #30353F;
-    --font: #F1F1F1;
-    --link: #1D60D1;
-    --recp: #545964;
+  --back: #191A1B;
+  --base: #30353F;
+  --font: #F1F1F1;
+  --link: #1D60D1;
+  --recp: #545964;
+  --button: #C7D0E4;
 }
 
 body {
@@ -15,11 +16,11 @@ body {
 }
 
 .navigation {
-    background-color: var(--base);
-    border-radius: 8px;
-    padding: 0.5em;
-    margin: 0.5em 0;
-    text-align: center;
+  background-color: var(--base);
+  border-radius: 8px;
+  padding: 0.5em;
+  margin: 0.5em 0;
+  text-align: center;
 }
 
 .navigation a {
@@ -28,8 +29,8 @@ body {
 }
 
 a {
-    color: var(--link);
-    text-decoration: none;
+  color: var(--link);
+  text-decoration: none;
 }
 
 a:hover {
@@ -38,15 +39,15 @@ a:hover {
 }
 
 .image {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
 }
 
 .image img {
-    width: 100%;
-    height: 300px;
-    border-radius: 8px;
+  width: 100%;
+  height: 300px;
+  border-radius: 8px;
 }
 
 .recipe {
@@ -64,14 +65,14 @@ a:hover {
 }
 
 a.recipe-link {
-    text-decoration: none;
-    color: inherit;
+  text-decoration: none;
+  color: inherit;
 }
 
 .recipe-link::after {
-    content: "";
-    position: absolute;
-    inset: 0;
+  content: "";
+  position: absolute;
+  inset: 0;
 }
 
 .recipe a[href^="/user/"] {
@@ -104,7 +105,10 @@ a.recipe-link {
 
 .error {
   color: firebrick;
-  min-height: 1.5em;
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .header {
@@ -130,8 +134,8 @@ a.mainheader {
 }
 
 .bottomnav {
-    background-color: var(--base);
-    text-align: center;
+  background-color: var(--base);
+  text-align: center;
 }
 
 .search {
@@ -143,21 +147,128 @@ a.mainheader {
   border-style: solid;
 }
 
-.commentfield {
-  background-color: var(--font);
+.searchbar{
+  width: 70%;
+  padding: 12px 8px;
+  font-size: 1.1em;
   border-width: 3px;
   border-style: solid;
-  border-radius: 8px;
+  border-color: var(--back);
+  outline: none;
+}
+
+.namebar{
+  width: 30%;
+  padding: 8px 6px;
+  font-size: 1.1em;
+  border-width: 2px;
+  border-radius: 4px;
+  border-style: solid;
+  border-color: var(--back);
+  outline: none;
+}
+
+.ingbar{
+  width: 30%;
+  padding: 6px 4px;
+  font-size: 1.0em;
+  border-width: 2px;
+  border-radius: 4px;
+  border-style: solid;
+  border-color: var(--back);
+  outline: none;
+}
+
+.amobar{
+  width: 10%;
+  padding: 6px 4px;
+  font-size: 1.0em;
+  border-width: 2px;
+  border-radius: 4px;
+  border-style: solid;
+  border-color: var(--back);
+  outline: none;
+}
+
+.timebar{
+  width: 8%;
+  padding: 3px 2px;
+  font-size: 0.8em;
+  border-width: 2px;
+  border-radius: 4px;
+  border-style: solid;
+  border-color: var(--back);
+  outline: none;
+}
+
+.commentfield {
+  background-color: var(--font);
+  border-width: 2px;
+  border-style: solid;
+  border-radius: 4px;
   border-color: var(--back);
 }
 
-.button {
-    font-size: 1em;
-    background-color: white;
-    color: var(--back);
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+select {
+  background-color: var(--font);
+  border-width: 2px;
+  border-style: solid;
+  border-radius: 4px;
+  border-color: var(--back);
+  padding: 2px;
+  font-size: 0.8em;
+  cursor: pointer;
+  outline: none;
 }
 
+.button {
+  font-size: 1em;
+  background-color: var(--button);
+  color: var(--back);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.ingbutton {
+  font-size: 1em;
+  background-color: var(--button);
+  color: var(--back);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+  top: 5px;
+  left: 2px;
+}
+
+.bigbutton {
+  font-size: 1em;
+  background-color: var(--button);
+  color: var(--back);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 10px 30px;
+}
+
+.remove {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+#closeerror {
+  display: none !important;
+}
+
+#closeerror:checked +label {
+  display: none;
+}
+
+label.remove {
+  cursor: pointer;
+}
 
