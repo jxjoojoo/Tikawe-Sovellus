@@ -108,15 +108,20 @@ def add_image():
 
     if request.method == "POST":
         file = request.files["image"]
+        if not file:
+            flash("Et ole valinnut kuvaa")
+            return redirect(f"/images/{recipe_id}")
         if not file.filename.endswith(".jpg"):
-            return "VIRHE: väärä tiedostomuoto"
+            flash("Kuva ei ole .jpg")
+            return redirect(f"/images/{recipe_id}")
 
         image = file.read()
         if len(image) > 100 * 1024:
-            return "VIRHE: liian suuri kuva"
+            flash("Kuva on liian suuri")
+            return redirect(f"/images/{recipe_id}")
         user_id = session["user_id"]
         recipes.add_image(recipe_id, image)
-        return redirect("/images/" + str(recipe_id))
+        return redirect(f"/images/{recipe_id}")
     
 @app.route("/remove_image", methods=["POST"])
 def remove_image():

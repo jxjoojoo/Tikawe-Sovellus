@@ -128,6 +128,14 @@ a.recipe-link {
   transform: translateX(-50%);
 }
 
+.errorimage {
+  color: firebrick;
+  position: absolute;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
 .header {
   background-color: var(--back);
   text-align: center;

@@ -34,11 +34,21 @@
     <h2>Valitse uusi .jpg kuva</h2>
     <form action="/add_image" method="post" enctype="multipart/form-data">
     <p>
-      <input type="file" name="image" accept=".jpg" />
+      <input type="file" name="image" accept="image/*" />
     </p>
     <input type="hidden" name="recipe_id" value="{{ recipe.id }}">
     <input class="removebutton" type="submit" value="Lisää kuva" />
   </form>
+    {% set messages = get_flashed_messages() %}
+    {% if messages %}
+      {% if "lisätty" in messages %}
+        <meta http-equiv="refresh" content="2;url="/">
+      {% endif %}
+        <input type="checkbox" id="closeerror">
+        <label class="remove" for="closeerror">
+          <h2 class="errorimage">{{ messages[-1] }}</h2>
+        </label>
+     {% endif %}
   <p class="bottomnav">
     <a href="/edit_recipe/{{ recipe.id }}">Muokkaa reseptiä | </a>
     <a href="/recipe/{{ recipe.id }}">Takaisin reseptiin | </a>
