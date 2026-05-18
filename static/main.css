@@ -112,6 +112,17 @@ a.recipe-link {
   text-align: center;
 }
 
+.mainheader {
+  background-color: var(--back);
+  color: inherit;
+  text-decoration: none;
+}
+
+a.mainheader {
+  color: inherit;
+  text-decoration: none;
+}
+
 .contentheader {
   background-color: var(--base);
   padding: 1em;
