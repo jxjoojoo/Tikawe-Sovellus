@@ -26,7 +26,7 @@ def add_recipe(ingredients, amounts, description, recipename, user_id, section, 
 
 def get_all_recipes():
     sql = """SELECT Recipes.id, Recipes.name, Recipes.description,
-            Recipes.items, Recipes.user_id, Users.username,
+            Recipes.user_id, Users.username,
             COUNT(Recipes.id) total_recipes, COUNT(Comments.id) comment_count
             FROM Recipes JOIN Users ON Recipes.user_id = Users.id
             LEFT JOIN Comments ON Recipes.id = Comments.recipe_id

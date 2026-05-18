@@ -282,7 +282,7 @@ def submit_new_recipe():
         if request.form.get(f"class_{group}"):
             choices[group] = request.form.get(f"class_{group}")
 
-    if not recipename or len(recipename) > 35:
+    if not recipename or len(recipename) > 33:
         abort(403)
     if len(description) > 1000:
         abort(403)
@@ -461,7 +461,7 @@ def update_recipe(recipe_id, recipename, ingredients, description, section, time
         abort(403)
     if not recipename:
         abort(403)
-    if len(recipename) > 35:
+    if len(recipename) > 33:
         abort(403)
     if not description:
         abort(403)
