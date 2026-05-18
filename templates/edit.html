@@ -3,70 +3,92 @@
 {% block title %}Respasovellus{% endblock %}
 
 {% block content %}
-<p>
-  <a href="/recipe/{{ recipe.id }}">Takaisin reseptiin</a>
-</p>
-<h2>Muokkaa reseptiä</h2>
-<a href="/images/{{ recipe.id }}">Muokkaa kuvia</a>
+<div class="recipe">
+  <h2 class="contentheader">Muokkaa reseptiä {{ recipe.name }}</h2>
+  <div class="image">
+    {% for image in images %}
+    <img src="/image/{{ image.id }}"/>
+    {% endfor %}
+  </div>
+  <form method="post" action="/edit_recipe/{{ recipe.id }}">
 
-<form method="post" action="/edit_recipe/{{ recipe.id }}">
+    <h3 class="recipetitle">Reseptin nimi:</h3>
+      <input type="text" class="namebar" name="recipename" value="{{ recipe.name }}" maxlength="50" required>
 
-  <p>Reseptin nimi:</p>
-    <input type="text" name="recipename" value="{{ recipe.name }}" maxlength="50" required>
+    <h3>Ainesosat:</h3>
+    <p>
+    <input type="hidden" name="count" value="{{ count }}">
+    </p>
 
-  <p>Ainesosat:</p>
-  <p>
-  <input type="hidden" name="count" value="{{ count }}">
+    {% for i in range(count) %}
+      <div>
+        <input type="text"
+               class="ingbar"
+               name="ingredients{{ i }}"
+               value="{{ ingredients[i].name }}"
+               maxlength="50"
+               placeholder="Ainesosa">
+        <input type="text"
+               class="amobar"
+               name="amounts{{ i }}"
+               value="{{ ingredients[i].amount }}"
+               maxlength="10"
+               placeholder="Määrä">
+        <button type="submit" class="removebutton" name="remove" value="{{ i }}">Poista</button>
+      </div>
+    {% endfor %}
+    <button type="submit" class="ingbutton" name="add" value="1">Lisää ainesosa</button>
+
+    <h3>Ohjeet:</h3>
+      <textarea name="description" class="commentfield" rows="15" cols="80" maxlength="1000">{{ description }}</textarea>
+
+    {% for category, options in classes.items() %}
+    <p>
+      <h3>{{ category }}:</h3>
+      <select name="class_{{ category }}">
+        <option value="">(valitse)</option>
+        {% for option in options %}
+          <option value="{{ option }}"
+            {% if choices[category] == option %}selected{% endif %}>{{ option }}
+          </option>
+        {% endfor %}
+      </select>
+    </p>
+    {% endfor %}
+    <p>
+      <h3>Aika:</h3>
+      <input type="number"
+             class="timebar"
+             name ="hours"
+             value="{{ hours }}"
+             placeholder="Tunnit"
+             min="0"
+             max="48">
+      <input type="number"
+             class="timebar"
+             name="minutes"
+             value="{{ minutes }}"
+             placeholder="Minuutit"
+             min="0"
+             max="59">
+    </p>
+    <input type="submit" class="bigbutton" name="save" value="Päivitä">
+    {% set messages = get_flashed_messages() %}
+    {% if messages %}
+      {% if "lisätty" in messages %}
+        <meta http-equiv="refresh" content="2;url="/">
+      {% endif %}
+        <input type="checkbox" id="closeerror">
+        <label class="remove" for="closeerror">
+          <h2 class="error">{{ messages[-1] }}</h2>
+        </label>
+     {% endif %}
+  </form>
+  <p class="bottomnav">
+    <a href="/images/{{ recipe.id }}">Muokkaa kuvia | </a>
+    <a href="/recipe/{{ recipe.id }}">Takaisin reseptiin | </a>
+    <a href="/remove_recipe/{{ recipe.id }}">Poista resepti</a>
+
   </p>
-
-  {% for i in range(count) %}
-    <div>
-      <input type="text"
-             name="ingredients{{ i }}"
-             value="{{ ingredients[i].name }}"
-             maxlength="50"
-             placeholder="Ainesosa">
-      <input type="text"
-             name="amounts{{ i }}"
-             value="{{ ingredients[i].amount }}"
-             maxlength="10"
-             placeholder="Määrä">
-      <button type="submit" name="remove" value="{{ i }}">Poista</button>
-    </div>
-  {% endfor %}
-  <button type="submit" name="add" value="1">Lisää ainesosa</button>
-
-  <p>Ohjeet:</p>
-    <textarea name="description" rows="15" cols="80" maxlength="1000" required>{{ description }}</textarea>
-
-  {% for category, options in classes.items() %}
-  <p>
-    {{ category }}: <br>
-    <select name="class_{{ category }}">
-      <option value="">(valitse)</option>
-      {% for option in options %}
-        <option value="{{ option }}"
-          {% if choices[category] == option %}selected{% endif %}>{{ option }}
-        </option>
-      {% endfor %}
-    </select>
-  </p>
-  {% endfor %}
-  <p>
-    Aika:
-    <input type="number"
-           name ="hours"
-           value="{{ hours }}"
-           placeholder="Tunnit"
-           min="0"
-           max="48">
-    <input type="number"
-           name="minutes"
-           value="{{ minutes }}"
-           placeholder="Minuutit"
-           min="0"
-           max="59">
-  </p>
-  <input type="submit" name="save" value="Päivitä">
-</form>
+</div>
 {% endblock %}

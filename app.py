@@ -346,6 +346,8 @@ def edit_recipe(recipe_id):
         abort(404)
     if recipe["user_id"] != session["user_id"]:
         abort(403)
+    
+    images = recipes.get_images(recipe_id)
 
     if request.method == "POST":
         recipename = request.form.get("recipename")
@@ -383,8 +385,24 @@ def edit_recipe(recipe_id):
                 ingredients.pop(index)
 
         if "save" in request.form:
-            update_recipe(recipe_id, recipename, ingredients, description, section, time, classes, choices)
-            return redirect("/recipe/" + str(recipe_id))
+            if not description:
+                flash("Kirjoita reseptille ohje!")
+                return render_template(
+                "edit.html",
+                recipe=recipe,
+                count=count,
+                ingredients=ingredients,
+                recipename=recipename,
+                description=description,
+                hours=hours,
+                minutes=minutes,
+                section=section,
+                classes=classes,
+                choices=choices,
+                images=images)
+            recipes.update_recipe(recipe_id, recipename, ingredients, description, section, time, classes, choices)
+            flash("Resepti päivitetty!")
+            return redirect(f"/message?prev=/recipe/{recipe_id}")
         
         count = len(ingredients)
         return render_template("edit.html", recipe=recipe,
@@ -392,7 +410,8 @@ def edit_recipe(recipe_id):
                                             description=description,
                                             count=count, section=section,
                                             hours=hours, minutes=minutes,
-                                            classes=classes, choices=choices)
+                                            classes=classes, choices=choices,
+                                            images=images)
 
 
 
@@ -423,10 +442,11 @@ def edit_recipe(recipe_id):
 
     return render_template("edit.html", recipe=recipe, ingredients=ingredients, description=description,
                                         count=count, section=section, hours=hours,
-                                        minutes=minutes, classes=classes, choices=choices)
+                                        minutes=minutes, classes=classes, choices=choices, images=images)
 
 def update_recipe(recipe_id, recipename, ingredients, description, section, time, classes, choices):
     recipe = recipes.get_recipe(recipe_id)
+    print(recipe)
 
     if not recipe:
         abort(404)
