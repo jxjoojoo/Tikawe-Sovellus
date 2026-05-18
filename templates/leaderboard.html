@@ -5,13 +5,18 @@
 {% block content %}
 <h2 class="header">Eniten julkaistuja reseptejä</h2>
 {% for user in leaderboard %}
-<div class="content">
-  {% if loop.index == 1 %}👑{% endif %}
-  {% if loop.index == 2 %}🥈{% endif %}
-  {% if loop.index == 3 %}🥉{% endif %}
-  {% if loop.index > 3 %}⭐{% endif %}
-  {{ loop.index }}.
-  <a href="/user/{{ user.id }}">{{ user.username }}</a>
+<div class="leaderboard">
+  <h3 class="leaderheader">
+  <p>
+    {% if loop.index == 1 %}👑 {% endif %}
+    {% if loop.index == 2 %}🥈 {% endif %}
+    {% if loop.index == 3 %}🥉 {% endif %}
+    {{ loop.index }}.
+    {% if loop.index == 1 %}👑{% endif %}
+    {% if loop.index == 2 %}🥈{% endif %}
+    {% if loop.index == 3 %}🥉{% endif %}
+  </p>
+  <a href="/user/{{ user.id }}">{{ user.username }}</a></h3>
   Lisännyt {{ user.recipe_count }} {% if user.recipe_count == 1 %}reseptin.
   {% else %}reseptiä.{% endif %}
 </div>

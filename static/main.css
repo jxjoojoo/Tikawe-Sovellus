@@ -91,6 +91,17 @@ a.recipe-link {
   text-align: center;
 }
 
+.leaderboard {
+  background-color: #30353f;
+  padding: 0.5em;
+  margin: 20px auto;
+  max-width: 400px;
+  border-radius: 12px;
+  border-width: 1px;
+  border-style: solid;
+  text-align: center;
+}
+
 .user {
   border: 2px solid black;
   background-color: grey;
@@ -130,6 +141,12 @@ a.mainheader {
 .contentheader {
   background-color: var(--base);
   padding: 1em;
+  text-align: center;
+}
+
+.leaderheader {
+  background-color: var(--base);
+  padding: -0.5em;
   text-align: center;
 }
 
