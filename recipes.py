@@ -62,7 +62,10 @@ def update_recipe(recipe_id, recipename, ingredients, description, section, time
             description = ?,
             time = ?
             WHERE id = ?"""
-    db.execute(sql, [recipename, description, time, recipe_id])
+    try:
+        db.execute(sql, [recipename, description, time, recipe_id])
+    except sqlite3.IntegrityError:
+        return "name_already_in_use"
 
     sql = "DELETE FROM Ingredients WHERE recipe_id = ?"
     db.execute(sql, [recipe_id])

@@ -418,9 +418,7 @@ def edit_recipe(recipe_id):
                 classes=classes,
                 choices=choices,
                 images=images)
-            recipes.update_recipe(recipe_id, recipename, ingredients, description, section, time, classes, choices)
-            flash("Resepti päivitetty!")
-            return redirect(f"/message?prev=/recipe/{recipe_id}")
+            update_recipe(recipe_id, recipename, ingredients, description, section, time, classes, choices, count, hours, minutes, images)
         
         count = len(ingredients)
         return render_template("edit.html", recipe=recipe,
@@ -462,9 +460,8 @@ def edit_recipe(recipe_id):
                                         count=count, section=section, hours=hours,
                                         minutes=minutes, classes=classes, choices=choices, images=images)
 
-def update_recipe(recipe_id, recipename, ingredients, description, section, time, classes, choices):
+def update_recipe(recipe_id, recipename, ingredients, description, section, time, classes, choices, count, hours, minutes, images):
     recipe = recipes.get_recipe(recipe_id)
-    print(recipe)
 
     if not recipe:
         abort(404)
@@ -478,8 +475,19 @@ def update_recipe(recipe_id, recipename, ingredients, description, section, time
         abort(403)
     if len(description) > 1000:
         abort(403)
-    
-    recipes.update_recipe(recipe_id, recipename, ingredients, description, section, time, classes, choices)
+
+    error = recipes.update_recipe(recipe_id, recipename, ingredients, description, section, time, classes, choices)
+    if error == "name_already_in_use":
+        flash("nimi on jo käytössä, valitse toinen nimi")
+        return render_template("edit.html", recipe=recipe, ingredients=ingredients,
+                                            description=description,
+                                            count=count, section=section,
+                                            hours=hours, minutes=minutes,
+                                            classes=classes, choices=choices,
+                                            images=images)
+    if not error:
+        flash("Resepti lisätty!")
+        return redirect(F"/message?prev=/recipe/{recipe_id}")
 
 @app.route("/remove_recipe/<int:recipe_id>", methods=["GET", "POST"])
 def remove_recipe(recipe_id):

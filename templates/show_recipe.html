@@ -7,7 +7,9 @@
   <h2 class="contentheader">{{ recipe.name }}</h2>
   <div class="image-container">
     {% for image in images %}
-    <img src="/image/{{ image.id }}"/>
+    <div class="image">
+      <img src="/image/{{ image.id }}"/>
+    </div>
     {% endfor %}
   </div>
   <h3>Ainesosat:</h3>
