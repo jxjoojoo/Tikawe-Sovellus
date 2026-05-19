@@ -8,15 +8,18 @@
   <form action="/create_account" method="post">
     <p>
       Käyttäjänimi: <br />
-      <input type="text" maxlength="30" name="username" />
+      <label for="username" class="hidden">Käyttäjänimi</label>
+      <input type="text" maxlength="30" name="username" id="username"/>
     </p>
     <p>
       Salasana: <br />
-      <input type="password" name="password1" />
+      <label for="password" class="hidden">Salasana</label>
+      <input type="password" name="password1" id="password"/>
     </p>
     <p>
       Salasana uudestaan: <br />
-      <input type="password" name="password2" />
+      <label for="password-again" class="hidden">Salasana uudestaan</label>
+      <input type="password" name="password2" id="password-again"/>
     </p>
     <input type="submit" class="button" value="Luo käyttäjä" />
   </form>
@@ -26,6 +29,6 @@
     {{ messages[0] }}
     {% endif %}
   </p>
-</div>
+</div><label for="description" class="hidden">Ohjeet</label>
 {% endblock %}
     

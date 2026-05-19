@@ -8,7 +8,8 @@
   <meta http-equiv="refresh" content="2;url={{ prev }}">
   {% set messages = get_flashed_messages() %}
   {% if messages %}
-    <h2 class="message">{{ messages[-1] }}</h2>
+  <h2 class="message">{{ messages[-1] }}</h2>
+  <p>Sinut ohjataan automaattisesti. <a href="{{ prev }}">Klikkaa tästä</a> jos ei onnistu.</p>
 </div>
 {% endif %}
 {% endblock %}

@@ -8,14 +8,21 @@
   <div class="image-container">
     {% for image in images %}
     <div class="image">
-      <img src="/image/{{ image.id }}"/>
+      <img src="/image/{{ image.id }}" alt="Reseptin kuva"/>
     </div>
     {% endfor %}
   </div>
   <form method="post" action="/edit_recipe/{{ recipe.id }}">
 
     <h3 class="recipetitle">Reseptin nimi:</h3>
-      <input type="text" class="namebar" name="recipename" value="{{ recipe.name }}" maxlength="33" required>
+      <label for="recipename" class="hidden">Reseptin nimi</label>
+      <input type="text"
+             class="namebar" 
+             name="recipename" 
+             id="recipename" 
+             value="{{ recipe.name }}" 
+             maxlength="33" 
+             required>
 
     <h3>Ainesosat:</h3>
     <p>
@@ -24,15 +31,19 @@
 
     {% for i in range(count) %}
       <div>
+        <label for="ing{{ i }}" class="hidden">Ainesosa</label>
         <input type="text"
                class="ingbar"
                name="ingredients{{ i }}"
+               id="ing{{ i }}"
                value="{{ ingredients[i].name }}"
                maxlength="30"
                placeholder="Ainesosa">
+        <label for="amo{{ i }}" class="hidden">Määrä</label>
         <input type="text"
                class="amobar"
                name="amounts{{ i }}"
+               id="amo{{ i }}
                value="{{ ingredients[i].amount }}"
                maxlength="10"
                placeholder="Määrä">
@@ -42,12 +53,18 @@
     <button type="submit" class="ingbutton" name="add" value="1">Lisää ainesosa</button>
 
     <h3>Ohjeet:</h3>
-      <textarea name="description" class="commentfield" rows="15" cols="80" maxlength="1000">{{ description }}</textarea>
+      <label for="description" class="hidden">Ohjeet</label>
+      <textarea name="description"
+                id="description"
+                class="commentfield" 
+                rows="15" cols="80" 
+                maxlength="1000">{{ description }}</textarea>
 
     {% for category, options in classes.items() %}
     <p>
       <h3>{{ category }}:</h3>
-      <select name="class_{{ category }}">
+      <label for="category{{ category }}" class="hidden">{{ category }}</label>
+      <select name="class_{{ category }}" id="category{{ category }}">
         <option value="">(valitse)</option>
         {% for option in options %}
           <option value="{{ option }}"
@@ -59,16 +76,20 @@
     {% endfor %}
     <p>
       <h3>Aika:</h3>
+      <label for="hours" class="hidden">Tunnit</label>
       <input type="number"
              class="timebar"
              name ="hours"
+             id="hours"
              value="{{ hours }}"
              placeholder="Tunnit"
              min="0"
              max="48">
+      <label for="minutes" class="hidden">Minuutit</label>
       <input type="number"
              class="timebar"
              name="minutes"
+             id="minutes"
              value="{{ minutes }}"
              placeholder="Minuutit"
              min="0"

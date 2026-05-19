@@ -8,7 +8,7 @@
   <div class="image-container">
     {% for image in images %}
     <div class="image">
-      <img src="/image/{{ image.id }}"/>
+      <img src="/image/{{ image.id }}" alt="Reseptin kuva"/>
     </div>
     {% endfor %}
   </div>
@@ -57,7 +57,13 @@
   {% if session.user_id %}
   <h3>Kommentoi</h3>
   <form action="/submit_comment" method="POST">
-    <textarea class="commentfield" name="comment" rows="6" cols="40" maxlength="1000"></textarea>
+    <label for="comment" class="hidden">Uusi kommentti</label>
+    <textarea class="commentfield" 
+              name="comment" 
+              id="comment" 
+              rows="6" 
+              cols="40" 
+              maxlength="1000"></textarea>
     <br/>
     <input type="hidden" name="recipe_id" value="{{ recipe.id }}">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />

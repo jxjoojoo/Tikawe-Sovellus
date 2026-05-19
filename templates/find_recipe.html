@@ -7,7 +7,13 @@
   <h2>Etsi respa</h2>
   <form action="/find_recipe" method="get">
     <p>
-      <input class="searchbar" type="text" name="query" placeholder="Etsi reseptin nimen, ohjeiden, tai tekijän perusteella" value = "{{ query }}">
+      <label for="query" class="hidden">Hakukenttä</label>
+      <input class="searchbar"
+             type="text" 
+             name="query" 
+             id="query" 
+             placeholder="Etsi reseptin nimen, ohjeiden, tai tekijän perusteella" 
+             value="{{ query }}">
     </p>
     <input type="submit" class="button" value="Hae">
   </form>
@@ -24,7 +30,7 @@
     ({{ recipe.comment_count }} kommentti{% if recipe.comment_count != 1 %}a{% endif %})
   </div>
     {% if recipe.image_id %}
-      <img class="recipe-image" src="/image/{{ recipe.image_id }}"/>
+      <img class="recipe-image" src="/image/{{ recipe.image_id }}" alt="Reseptin kuva"/>
     {% endif %}
 </div>
 {% endfor %}

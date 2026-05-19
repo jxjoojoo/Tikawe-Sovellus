@@ -222,8 +222,8 @@ def newrecipe():
     
     recipename = request.form.get("recipename", "")
     description = request.form.get("description", "")
-    minutes = request.form.get("minutes")
-    hours = request.form.get("hours")
+    minutes = int(request.form.get("minutes") or 0)
+    hours = int(request.form.get("minutes") or 0)
     section = request.form.get("section")
     classes = recipes.get_all_classes()
     choices = {}
@@ -311,6 +311,7 @@ def submit_new_recipe():
     if len(description) > 1000:
         abort(403)
     if not description:
+        print("EI OHJETTA")
         flash("Kirjoita reseptille ohje!")
         return render_template(
         "newrecipe.html",
@@ -376,7 +377,6 @@ def remove_comment(comment_id):
         check_csrf()
         user_id = session["user_id"]
         com = recipes.get_comment_author_and_recipe(comment_id)
-        print("COMMENT ID:", comment_id)
         if com == None:
             abort(404)
 

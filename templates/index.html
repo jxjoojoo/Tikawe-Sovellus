@@ -23,7 +23,7 @@
     ({{ recipe.comment_count }} kommentti{% if recipe.comment_count != 1 %}a{% endif %})
   </div>
     {% if recipe.image_id %}
-      <img class="recipe-image" src="/image/{{ recipe.image_id }}"/>
+      <img class="recipe-image" src="/image/{{ recipe.image_id }}" alt="Reseptin kuva"/>
     {% endif %}
 </div>
 {% endfor %}
