@@ -165,6 +165,10 @@ def create_new_account():
         flash("VIRHE: Puuttuvia kenttiä")
         return redirect("/register")
     
+    if len(username) > 30:
+        flash("Liian pitkä nimi!")
+        return redirect("/register")
+    
     try:
         users.create_user(username, password1)
     except sqlite3.IntegrityError:
@@ -258,8 +262,11 @@ def submit_new_recipe():
 
     for i in range(count):
         ing = request.form.get(f"ingredients{i}", "")
+        if len(ing) > 30:
+            abort(403)
         amt = request.form.get(f"amounts{i}", "")
-
+        if len(amt) > 10:
+            abort(403)
         if ing.strip() and amt.strip():
             ingredients.append(ing)
             amounts.append(amt)
@@ -364,7 +371,11 @@ def edit_recipe(recipe_id):
         ingredients = []
         for i in range(count):
             ing = request.form.get(f"ingredients{i}", "")
+            if len(ing) > 30:
+                abort(403)
             amt = request.form.get(f"amounts{i}", "")
+            if len(amt) >10:
+                abort(403)
             if ing.strip():
                 ingredients.append({"name": ing, "amount": amt})
 

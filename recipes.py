@@ -25,15 +25,19 @@ def add_recipe(ingredients, amounts, description, recipename, user_id, section, 
     return recipe_id
 
 def get_all_recipes():
-    sql = """SELECT Recipes.id, Recipes.name, Recipes.description,
+    sql= """SELECT Recipes.id, Recipes.name, Recipes.description,
             Recipes.user_id, Users.username,
-            COUNT(Recipes.id) total_recipes, COUNT(Comments.id) comment_count
-            FROM Recipes JOIN Users ON Recipes.user_id = Users.id
+            COUNT(Comments.id) comment_count,
+            (SELECT Images.id FROM Images
+            WHERE Images.recipe_id = Recipes.id
+            ORDER BY Images.id ASC LIMIT 1) image_id
+            FROM Recipes 
+            JOIN Users ON Recipes.user_id = Users.id
             LEFT JOIN Comments ON Recipes.id = Comments.recipe_id
-            WHERE Recipes.user_id = Users.id
             GROUP BY Recipes.id
             ORDER BY Recipes.id DESC"""
-    
+    #image = first added picture for each recipe
+
     return db.query(sql)
 
 def get_ingredients(recipe_id):
@@ -120,7 +124,10 @@ def remove_recipe(recipe_id):
 
 def find_recipes(query):
     sql = """SELECT R.id, R.name, R.user_id,
-            U.username, COUNT(C.id) comment_count
+            U.username, COUNT(C.id) comment_count,
+            (SELECT Images.id FROM Images
+            WHERE Images.recipe_id = R.id
+            ORDER BY Images.id ASC LIMIT 1) image_id
             FROM Recipes R
             JOIN Users U ON R.user_id = U.id
             LEFT JOIN Comments C ON R.id = C.recipe_id

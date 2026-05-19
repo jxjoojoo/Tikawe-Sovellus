@@ -15,13 +15,19 @@
 </div>
 
 {% for recipe in results %}
-<div class="recipe">
-  <a class="recipe-link" href="/recipe/{{ recipe.id }}">
+<div class="homep-recipe">
+  <div class="recipe-info">
+    <a class="recipe-link" href="/recipe/{{ recipe.id }}">
     <h3 class="recipetitle">{{ recipe.name }}</h3>
-  </a>
+    </a>
     Julkaissut: <a href="/user/{{ recipe.user_id }}">{{ recipe.username }}</a> <br/>
     ({{ recipe.comment_count }} kommentti{% if recipe.comment_count != 1 %}a{% endif %})
+  </div>
+    {% if recipe.image_id %}
+      <img class="recipe-image" src="/image/{{ recipe.image_id }}"/>
+    {% endif %}
 </div>
 {% endfor %}
+
 {% endblock %}
 

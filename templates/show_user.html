@@ -14,13 +14,18 @@
     Olet kirjautunut tälle käyttäjälle
   </p>
   {% endif %}
-  {% for recipe in recipes %}
-  <div class="recipe">
+{% for recipe in recipes %}
+<div class="homep-recipe">
+  <div class="recipe-info">
     <a class="recipe-link" href="/recipe/{{ recipe.id }}">
-      <h3 class="recipetitle">{{ recipe.name }}</h3>
-      ({{ recipe.comment_count }} kommentti{% if recipe.comment_count != 1 %}a{% endif %})
+    <h3 class="recipetitle">{{ recipe.name }}</h3>
     </a>
+    ({{ recipe.comment_count }} kommentti{% if recipe.comment_count != 1 %}a{% endif %})
   </div>
-  {% endfor %}
+    {% if recipe.image_id %}
+      <img class="recipe-image" src="/image/{{ recipe.image_id }}"/>
+    {% endif %}
+</div>
+{% endfor %}
   
 {% endblock %}

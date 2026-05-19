@@ -66,8 +66,32 @@ a:hover {
   margin: 0.5em 0;
 }
 
-.recipetitle {
+.homep-recipe {
+  display: flex;
+  align-items: center;
+  position: relative;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 8px;
+  background-color: var(--base);
+  padding: 1em;
   margin: 0.5em 0;
+}
+
+.homep-recipe a[href^="/user/"] {
+  position: relative;
+  z-index: 1;
+}
+.recipe-info {
+  flex: 1;
+}
+
+.recipe-image {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 4px;
+  flex-shrink: 1;
 }
 
 a.recipe-link {
