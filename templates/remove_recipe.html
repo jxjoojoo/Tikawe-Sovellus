@@ -6,6 +6,7 @@
 <div class="search">
   <h2>Haluatko varmasti poistaa reseptin {{ recipe.name }}?</h2>
     <form action="/remove_recipe/{{ recipe.id }}" method="post">
+      <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
       <input class="bigbutton" type="submit" name="remove" value="Poista resepti">
       <input class="bigbutton" type="submit" name="dont" value="Takaisin">
     </form>

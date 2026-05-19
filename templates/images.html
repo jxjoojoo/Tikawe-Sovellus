@@ -27,6 +27,7 @@
     <input type="hidden" name="recipe_id" value="{{ recipe.id }}">
     {% if images | count > 0 %}
     <p>
+      <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
       <input class="button" type="submit" value="Poista valitut"/>
     </p>
     {% endif %}
@@ -37,6 +38,7 @@
       <input type="file" name="image" accept="image/*" />
     </p>
     <input type="hidden" name="recipe_id" value="{{ recipe.id }}">
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
     <input class="removebutton" type="submit" value="Lisää kuva" />
   </form>
     {% set messages = get_flashed_messages() %}

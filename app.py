@@ -1,3 +1,4 @@
+import secrets
 import sqlite3
 from flask import Flask
 from flask import abort, redirect, render_template, flash, request, session, make_response
@@ -13,7 +14,14 @@ def check_login():
     if "user_id" not in session:
         abort(403)
 
-@app.route("/", methods=["GET","POST"])
+def check_csrf():
+    if "csrf_token" not in session:
+        print("Hyökkäys huomattu")
+        abort(403)
+    if request.form["csrf_token"] != session["csrf_token"]:
+        abort(403)
+
+@app.route("/")
 def index():
     all_recipes = recipes.get_all_recipes()
     recipes_count = len(all_recipes)
@@ -72,6 +80,7 @@ def login():
     if user_id:
         session["username"] = username
         session["user_id"] = user_id
+        session["csrf_token"] = secrets.token_hex(16)
         flash("Kirjautuminen onnistui")
         return redirect("/")
     else:
@@ -95,6 +104,7 @@ def edit_images(recipe_id):
 @app.route("/add_image", methods=["POST"])
 def add_image():
     check_login()
+    check_csrf()
     recipe_id = request.form["recipe_id"]
     recipe = recipes.get_recipe(recipe_id)
 
@@ -126,6 +136,7 @@ def add_image():
 @app.route("/remove_image", methods=["POST"])
 def remove_image():
     check_login()
+    check_csrf()
     recipe_id = request.form["recipe_id"]
     recipe = recipes.get_recipe(recipe_id)
 
@@ -151,7 +162,7 @@ def logout():
 def register():
     return render_template("register.html")
 
-@app.route("/create", methods=["POST"])
+@app.route("/create_account", methods=["POST"])
 def create_new_account():
     username = request.form["username"]
     password1 = request.form["password1"]
@@ -186,7 +197,6 @@ def message():
 
 @app.route("/newrecipe", methods=["GET", "POST"])
 def newrecipe():
-
     check_login()
 
     count = int(request.form.get("count", 1))
@@ -231,6 +241,7 @@ def newrecipe():
                 choices=choices)
 
     if request.method == "POST":
+        check_csrf()
         choices = {}
         for category in classes:
             value = request.form.get(f"class_{category}", "")
@@ -247,13 +258,12 @@ def newrecipe():
         minutes=minutes,
         section=section,
         classes=classes,
-        choices=choices
-        
-    )
+        choices=choices)
 
-@app.route("/submit", methods=["GET","POST"])
+@app.route("/create_recipe", methods=["GET","POST"])
 def submit_new_recipe():
     check_login()
+    check_csrf()
 
     count = int(request.form.get("count", 1))
 
@@ -342,6 +352,7 @@ def submit_new_recipe():
 @app.route("/submit_comment", methods=["POST"])
 def newcomment():
     check_login()
+    check_csrf()
     comment = request.form.get("comment", "")
     recipe_id = request.form.get("recipe_id", "")
     recipe = recipes.get_recipe(recipe_id)
@@ -364,6 +375,7 @@ def edit_recipe(recipe_id):
     images = recipes.get_images(recipe_id)
 
     if request.method == "POST":
+        check_csrf()
         recipename = request.form.get("recipename")
         description = request.form.get("description")
         count = int(request.form.get("count", 1))
@@ -418,7 +430,13 @@ def edit_recipe(recipe_id):
                 classes=classes,
                 choices=choices,
                 images=images)
-            update_recipe(recipe_id, recipename, ingredients, description, section, time, classes, choices, count, hours, minutes, images)
+            result = update_recipe(recipe_id, recipename,
+                                    ingredients, description,
+                                    section, time, classes,
+                                    choices, count, hours,
+                                    minutes, images)
+            if result:
+                return result
         
         count = len(ingredients)
         return render_template("edit.html", recipe=recipe,
@@ -486,11 +504,12 @@ def update_recipe(recipe_id, recipename, ingredients, description, section, time
                                             classes=classes, choices=choices,
                                             images=images)
     if not error:
-        flash("Resepti lisätty!")
-        return redirect(F"/message?prev=/recipe/{recipe_id}")
+        flash("Resepti päivitetty!")
+        return redirect(f"/message?prev=/recipe/{recipe_id}")
 
 @app.route("/remove_recipe/<int:recipe_id>", methods=["GET", "POST"])
 def remove_recipe(recipe_id):
+    check_login()
 
     recipe = recipes.get_recipe(recipe_id)
     if not recipe:
@@ -503,6 +522,7 @@ def remove_recipe(recipe_id):
         return render_template("remove_recipe.html", recipe=recipe)
     
     if request.method == "POST":
+        check_csrf()
         if "remove" in request.form:
             recipes.remove_recipe(recipe_id)
             flash("Resepti poistettu!")

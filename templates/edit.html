@@ -7,7 +7,9 @@
   <h2 class="contentheader">Muokkaa reseptiä {{ recipe.name }}</h2>
   <div class="image-container">
     {% for image in images %}
-    <img src="/image/{{ image.id }}"/>
+    <div class="image">
+      <img src="/image/{{ image.id }}"/>
+    </div>
     {% endfor %}
   </div>
   <form method="post" action="/edit_recipe/{{ recipe.id }}">
@@ -72,6 +74,7 @@
              min="0"
              max="59">
     </p>
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
     <input type="submit" class="bigbutton" name="save" value="Päivitä">
     {% set messages = get_flashed_messages() %}
     {% if messages %}

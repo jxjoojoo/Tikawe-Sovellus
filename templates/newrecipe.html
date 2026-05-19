@@ -63,7 +63,8 @@
              min="0"
              max="59">
     </p>
-    <input type="submit" class="bigbutton" name="submitrecipe" formaction="/submit" value="Julkaise">
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+    <input type="submit" class="bigbutton" name="submitrecipe" formaction="/create_recipe" value="Julkaise">
     {% set messages = get_flashed_messages() %}
     {% if messages %}
       {% if "lisätty" in messages %}
