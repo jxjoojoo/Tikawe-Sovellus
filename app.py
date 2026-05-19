@@ -1,4 +1,5 @@
 import secrets
+import markupsafe
 import sqlite3
 from flask import Flask
 from flask import abort, redirect, render_template, flash, request, session, make_response
@@ -20,6 +21,12 @@ def check_csrf():
         abort(403)
     if request.form["csrf_token"] != session["csrf_token"]:
         abort(403)
+
+@app.template_filter()
+def show_lines(content):
+    content = str(markupsafe.escape(content))
+    content = content.replace("\n", "<br />")
+    return markupsafe.Markup(content)
 
 @app.route("/")
 def index():
@@ -361,6 +368,23 @@ def newcomment():
     user_id = session["user_id"]
     recipes.add_comment(comment, recipe_id, user_id)
     return redirect(f"/recipe/{recipe_id}")
+
+@app.route("/remove_comment/<int:comment_id>", methods=["POST"])
+def remove_comment(comment_id):
+    if request.method == "POST":
+        check_login()
+        check_csrf()
+        user_id = session["user_id"]
+        com = recipes.get_comment_author_and_recipe(comment_id)
+        print("COMMENT ID:", comment_id)
+        if com == None:
+            abort(404)
+
+        if com[0] == user_id:
+            recipes.remove_comment(comment_id)
+            return redirect(f"/recipe/{com[1]}")
+        else:
+            abort(403)
 
 @app.route("/edit_recipe/<int:recipe_id>", methods=["GET", "POST"])
 def edit_recipe(recipe_id):

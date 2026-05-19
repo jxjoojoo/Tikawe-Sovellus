@@ -85,8 +85,21 @@ def add_comment(comment, recipe_id, user_id):
             VALUES (?, ?, ?)"""
     db.execute(sql, [recipe_id, user_id, comment])
 
+def get_comment_author_and_recipe(comment_id):
+    sql = """SELECT user_id, recipe_id
+            FROM Comments WHERE id = ?"""
+    result = db.query(sql, [comment_id])
+    if not result:
+        return None
+    return result[0]
+
+def remove_comment(comment_id):
+    sql = "DELETE FROM Comments WHERE Comments.id = ?"
+    db.execute(sql, [comment_id])
+
 def get_comments(recipe_id):
-    sql = """SELECT Comments.comment_str, Users.id AS user_id, Users.username
+    sql = """SELECT Comments.comment_str, Users.id AS user_id,
+            Users.username, Comments.id
             FROM Comments, Users WHERE Comments.recipe_id = ?
             AND Comments.user_id = Users.id
             ORDER BY Comments.id DESC"""

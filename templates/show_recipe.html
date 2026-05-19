@@ -21,7 +21,7 @@
   {% if recipe.description %}
   <h3>Ohjeet:</h3>
   <p>
-    {{ recipe.description }}
+    {{ recipe.description | show_lines }}
     {% endif %}
     {% if classes %}
   </p>
@@ -39,11 +39,21 @@
   </p>
   <h3>Reseptin tekijä: <a href="/user/{{ recipe.user_id }}"> {{ username }}</a></h3>
   <h3>Kommentit ({{ comments | count }}):</h3>
-  <ul>
-    {% for comment in comments %}
-    <li>{{ comment.comment_str }} - <a href="/user/{{ comment.user_id }}">{{ comment.username }}</a></li>
-    {% endfor %}
-  </ul>
+  {% for comment in comments %}
+  <div class="comment">
+    <div class="com-author">
+      <a href="/user/{{ comment.user_id }}">{{ comment.username }}</a>
+        {% if session.user_id == comment.user_id %}
+        <form action="/remove_comment/{{ comment.id }}" method="POST">
+          <input type="hidden" name="recipe_id" value="{{ recipe.id }}">
+          <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+          <input type="submit" class="combutton" value="Poista">
+        </form>
+        {% endif %}
+      </div>
+    {{ comment.comment_str | show_lines }}
+  </div>
+  {% endfor %}
   {% if session.user_id %}
   <h3>Kommentoi</h3>
   <form action="/submit_comment" method="POST">

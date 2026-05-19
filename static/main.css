@@ -5,6 +5,7 @@
   --link: #1D60D1;
   --recp: #545964;
   --button: #C7D0E4;
+  --comment: #43464D;
 }
 
 body {
@@ -114,7 +115,7 @@ a.recipe-link {
 }
 
 .content {
-  background-color: #30353f;
+  background-color: var(--base);
   padding: 2em;
   margin: 50px auto;
   max-width: 400px;
@@ -124,8 +125,34 @@ a.recipe-link {
   text-align: center;
 }
 
+.comment {
+  position: relative;
+  background-color: var(--comment);
+  padding: 1.5em;
+  margin: 10px 0;
+  max-width: 400px;
+  border-radius: 8px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--back);
+  overflow-wrap: break-word;
+}
+
+.com-author {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 0.5em;
+  margin-bottom: 0.8em;
+  border-bottom: 1px solid var(--back);
+  font-weight: bold;
+}
+
+.com-author a {
+  text-decoration: none;
+}
+
 .leaderboard {
-  background-color: #30353f;
+  background-color: var(--base);
   padding: 0.5em;
   margin: 20px auto;
   max-width: 400px;
@@ -286,6 +313,19 @@ select {
   border: none;
   border-radius: 4px;
   cursor: pointer;
+}
+
+.combutton {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  font-size: 0.9em;
+  background-color: var(--button);
+  color: var(--back);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 4px 8px;
 }
 
 .ingbutton {
